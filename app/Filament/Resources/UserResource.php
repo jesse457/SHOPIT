@@ -22,6 +22,7 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?int $navigationSort = 1;
+    protected static ?string $navigationBadgeTooltip = 'The number of users';
 
     public static function getGloballySearchableAttributes(): array
     {
@@ -77,6 +78,16 @@ class UserResource extends Resource
                 ]),
             ]);
     }
+
+    public static function getNavigationBadge(): ?string
+{
+    return static::getModel()::count();
+}
+
+public static function getNavigationBadgeColor(): ?string
+{
+    return static::getModel()::count() > 10 ? 'warning' : 'primary';
+}
 
     public static function getRelations(): array
     {
