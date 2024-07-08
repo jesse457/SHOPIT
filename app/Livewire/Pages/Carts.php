@@ -24,8 +24,6 @@ class Carts extends Component
 
     public function increaseQty($product_id)
     {
-        $visitors = User::where('logged_in', false)->count();
-        dd($visitors);
         $this->cart_items = CartManagement::incrementQuantityToCartItem($product_id);
         $this->grand_total = CartManagement::calculateGrandTotal($this->cart_items);
     }

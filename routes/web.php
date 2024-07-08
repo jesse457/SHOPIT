@@ -14,7 +14,14 @@ Route::get('/', Home::class);
 
 
 Route::middleware('guest')->group(function(){
-    Route::get('/categories', Categories::class);
+    Route::get('categories', Categories::class)->name('categories');
+    Route::get('products', Products::class);
+    Route::get('cart', Carts::class);
+    Route::get('products/{slug}', ProductDetail::class);
+});
+
+Route::middleware('auth')->group(function(){
+    Route::get('categories', Categories::class)->name('categories');
     Route::get('products', Products::class);
     Route::get('cart', Carts::class);
     Route::get('products/{slug}', ProductDetail::class);

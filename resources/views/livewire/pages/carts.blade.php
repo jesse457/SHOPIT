@@ -35,7 +35,7 @@
                                                 wire:click='increaseQty({{$cart_item['product_id']}})'>+</button>
                                         </div>
                                     </td>
-                                    <td class="py-4">{{ Number::currency($grand_total, 'XAF') }}</td>
+                                    <td class="py-4">{{ Number::currency($cart_item['total_amount'], 'XAF') }}</td>
                                     <td><button
                                             class="px-3 py-1 border-2 rounded-lg bg-slate-300 border-slate-400 hover:bg-red-500 hover:text-white hover:border-red-700" wire:click='removeItem({{$cart_item['product_id']}})'>Remove</button>
                                     </td>
@@ -74,7 +74,7 @@
                         <span class="font-semibold">{{  Number::currency($grand_total, 'XAF')  }}</span>
                     </div>
                     @if ($cart_items)
-                    <a href="/checkout" class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-lg">Checkout</a>
+                    <a wire:navigate href="/checkout" class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-lg">Checkout</a>
                     @endif
 
                 </div>

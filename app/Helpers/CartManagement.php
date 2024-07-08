@@ -131,6 +131,7 @@ class CartManagement
         // Implementation of incrementing the quantity of a specific cart item goes here.
     }
 
+
     static public function decrementQuantityToCartItem($product_id)
     {
         $cart_items = self::getCartItemsFromCookie();

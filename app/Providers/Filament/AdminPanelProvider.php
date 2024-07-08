@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\OrderResource\Widgets\OrderStats;
+use App\Filament\Resources\ProductResource\Widgets\DashboardInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -31,14 +32,14 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Indigo,
                 'info' => Color::Blue,
-            
+
                 'success' => Color::Emerald,
                 'danger' => Color::Red,
                 'warning' => Color::Orange,
 
             ])
             ->font('Inter')
-            ->brandName('Filament Demo')
+            ->brandName('SHOPIT')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -47,7 +48,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                OrderStats::class
+                DashboardInfo::class
             ])
             ->middleware([
                 EncryptCookies::class,
