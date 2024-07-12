@@ -21,7 +21,7 @@ class Login extends Component
     {
         $this->validate([
             'email' => 'required|email|max:255',
-            'password' => 'required|min:8|max:255',
+            'password' => 'required|min:2|max:255',
         ]);
 
         if (!auth()->attempt(['email' => $this->email, 'password' => $this->password])) {

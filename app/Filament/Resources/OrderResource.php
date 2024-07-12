@@ -217,7 +217,7 @@ class OrderResource extends Resource
                     ->options([
                         'new' => 'New',
                         'processing' => 'Processing',
-                        'hipped' => 'Shipped',
+                        'shipped' => 'Shipped',
                         'delivered' => 'Delivered',
                         'cancelled' => 'Cancelled',
                     ])

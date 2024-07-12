@@ -80,8 +80,9 @@
                             </div>
                             <!-- End Form Group -->
                             <button type="submit"
-                                class="inline-flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-white bg-blue-600 border border-transparent rounded-lg gap-x-2 hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">Sign
+                                class="inline-flex items-center justify-center w-full px-4 py-3 text-sm text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"><div wire:loading class="w-4 h-4 border-b-2 border-gray-100 rounded-full animate-spin"></div>Sign
                                 in</button>
+
                         </div>
                     </form>
                     <!-- End Form -->

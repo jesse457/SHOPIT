@@ -40,6 +40,9 @@ class Products extends Component
     {
         $total_count = CartManagement::AddItemsToCart($product_id);
         $this->dispatch('update-cart-count', total_count: $total_count)->to(Navbar::class);
+        if($total_count){
+            return session()->flash('success');
+        }
 
         // $this->alert('success','Product added to Cart ',[
         //     'position' => 'bottom-end',

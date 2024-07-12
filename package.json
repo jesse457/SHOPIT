@@ -14,6 +14,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "poppins": "^0.1.1",
         "preline": "^2.1.0"
     }
 }

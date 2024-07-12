@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\ProductResource\Widgets\BlogPostsChart;
+use App\Filament\Resources\ProductResource\Widgets\StatisticsChart;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -22,7 +23,7 @@ class ListProducts extends ListRecords
     protected function getFooterWidgets(): array
     {
         return [
-            BlogPostsChart::class
+            StatisticsChart::class
         ];
     }
 

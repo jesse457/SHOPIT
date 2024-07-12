@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\OrderResource\Widgets\OrderStats;
 use App\Filament\Resources\ProductResource\Widgets\DashboardInfo;
+use App\Filament\Resources\ProductResource\Widgets\StatisticsChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -32,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Indigo,
                 'info' => Color::Blue,
-
+                'gray' => Color::Gray,
                 'success' => Color::Emerald,
                 'danger' => Color::Red,
                 'warning' => Color::Orange,
@@ -48,7 +49,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                DashboardInfo::class
+                DashboardInfo::class,
+                StatisticsChart::class
             ])
             ->middleware([
                 EncryptCookies::class,
