@@ -197,11 +197,11 @@
         </div>
     </section>
 
-    <div class="py-20 bg-orange-200">
+    <div class="py-20 bg-blue-400">
         <div class="max-w-xl mx-auto">
             <div class="text-center ">
                 <div class="relative flex flex-col items-center">
-                    <h1 class="text-5xl font-bold dark:text-gray-200"> Browse <span class="text-blue-500"> Categories
+                    <h1 class="text-5xl font-bold dark:text-gray-200"> Browse <span class="text-gray-100"> Categories
                         </span> </h1>
                     <div class="flex w-40 mt-2 mb-6 overflow-hidden rounded">
                         <div class="flex-1 h-2 bg-blue-200">
@@ -212,7 +212,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="mb-12 text-base text-center text-gray-500">
+                <p class="mb-12 text-base text-center text-gray-100">
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus magni eius eaque?
                     Pariatur
                     numquam, odio quod nobis ipsum ex cupiditate?
