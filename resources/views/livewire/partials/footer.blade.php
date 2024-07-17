@@ -1,31 +1,31 @@
-<footer class="w-full bg-gray-900">
+<footer class="w-full bg-blue-400">
     <div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 lg:pt-20 mx-auto">
       <!-- Grid -->
       <div class="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-5">
         <div class="col-span-full lg:col-span-1">
-          <a class="flex-none text-xl font-semibold text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#" aria-label="Brand">SHOPIT</a>
+          <a class="flex-none text-xl font-semibold text-dark dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#" aria-label="Brand">SHOPIT</a>
         </div>
         <!-- End Col -->
 
         <div class="col-span-1">
-          <h4 class="font-semibold text-gray-100">Product</h4>
+          <h4 class="font-semibold text-dark">Product</h4>
 
           <div class="grid mt-3 space-y-3">
-            <p><a class="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/categories">Categories</a></p>
-            <p><a class="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/products">All Products</a></p>
-            <p><a class="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/products">Featured Products</a></p>
+            <p><a class="inline-flex text-white gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/categories">Categories</a></p>
+            <p><a class="inline-flex text-white gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/products">All Products</a></p>
+            <p><a class="inline-flex text-white gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/products">Featured Products</a></p>
           </div>
         </div>
         <!-- End Col -->
 
         <div class="col-span-1">
-          <h4 class="font-semibold text-gray-100">Company</h4>
+          <h4 class="font-semibold text-dark ">Company</h4>
 
           <div class="grid mt-3 space-y-3">
-            <p><a class="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">About us</a></p>
-            <p><a class="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">Blog</a></p>
+            <p><a class="inline-flex text-white gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">About us</a></p>
+            <p><a class="inline-flex text-white gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">Blog</a></p>
 
-            <p><a class="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">Customers</a></p>
+            <p><a class="inline-flex text-white gap-x-2 hover:text-gray-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">Customers</a></p>
           </div>
         </div>
         <!-- End Col -->

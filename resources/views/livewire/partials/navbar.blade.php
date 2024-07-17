@@ -1,5 +1,5 @@
 <header class="sticky inset-x-0 z-50 flex flex-wrap w-full top-4 md:justify-start md:flex-nowrap">
-    <nav class="relative max-w-[66rem] w-full bg-blue-400 rounded-[28px] py-3 ps-5 pe-2 md:flex md:items-center md:justify-between md:py-0 mx-2 lg:mx-auto font-poppins font-extrabold"
+    <nav class="relative max-w-[80rem] w-full bg-blue-400 rounded-[28px] py-3 ps-5 pe-2 md:flex md:items-center md:justify-between md:py-0 mx-2 lg:mx-auto font-poppins font-extrabold"
         aria-label="Global">
         <div class="flex items-center justify-between">
             <!-- Logo -->
@@ -24,16 +24,16 @@
 
             <div class="md:hidden">
                 <button type="button"
-                    class="flex items-center justify-center text-sm font-semibold text-white rounded-full hs-collapse-toggle size-8 bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none"
+                    class="flex items-center justify-center text-sm font-semibold text-white rounded-full hs-collapse-toggle size-8 bg-neutral-100 disabled:opacity-50 disabled:pointer-events-none"
                     data-hs-collapse="#navbar-collapse" aria-controls="navbar-collapse" aria-label="Toggle navigation">
-                    <svg class="flex-shrink-0 hs-collapse-open:hidden size-4" xmlns="http://www.w3.org/2000/svg"
+                    <svg class=" text-neutral-800 flex-shrink-0 hs-collapse-open:hidden size-4" xmlns="http://www.w3.org/2000/svg"
                         width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="3" x2="21" y1="6" y2="6" />
                         <line x1="3" x2="21" y1="12" y2="12" />
                         <line x1="3" x2="21" y1="18" y2="18" />
                     </svg>
-                    <svg class="flex-shrink-0 hidden hs-collapse-open:block size-4" xmlns="http://www.w3.org/2000/svg"
+                    <svg class=" text-neutral-800 flex-shrink-0 hidden  hs-collapse-open:block size-4" xmlns="http://www.w3.org/2000/svg"
                         width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6 6 18" />

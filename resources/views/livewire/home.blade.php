@@ -96,7 +96,7 @@
         },
         startAutoSlide() {
             this.stopAutoSlide();
-            this.autoSlideInterval = setInterval(() => this.next(), 3000);
+            this.autoSlideInterval = setInterval(() => this.next(), 2000);
         },
         stopAutoSlide() {
             if (this.autoSlideInterval) clearInterval(this.autoSlideInterval);
@@ -107,7 +107,7 @@
         window.addEventListener('resize', updateItemsPerPage);
         startAutoSlide();
     "
-    @mouseover="stopAutoSlide()"
+
     @mouseout="startAutoSlide()"
 >
     <h1 class="mb-10 text-5xl font-bold text-center dark:text-gray-200">
@@ -118,26 +118,21 @@
             :style="`transform: translateX(-${currentIndex * 100 / itemsPerPage}%)`">
             <template x-for="product in products" :key="product.id">
                 <div class="flex-shrink-0 w-full px-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                    <div class="relative flex-shrink-0 overflow-hidden bg-blue-400 rounded-lg shadow-lg group">
-                        <svg class="absolute bottom-0 left-0 mb-8 scale-150 group-hover:scale-[1.65] transition-transform"
-                            viewBox="0 0 375 283" fill="none" style="opacity: 0.1;">
-                            <rect x="159.52" y="175" width="152" height="152" rx="8"
-                                transform="rotate(-45 159.52 175)" fill="white" />
-                            <rect y="107.48" width="152" height="152" rx="8"
-                                transform="rotate(-45 0 107.48)" fill="white" />
-                        </svg>
-                        <div class="relative flex items-center justify-center px-10 pt-10 transition-transform group-hover:scale-110">
-                            <div class="absolute bottom-0 left-0 block w-48 h-48 ml-3 -mb-24"
-                                style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
-                            </div>
-                            <img class="relative w-40" :src="'{{ url('storage') }}/' + product.images[0]" :alt="product.name">
+                    <div class="relative flex flex-col h-full overflow-hidden bg-blue-400 rounded-lg shadow-lg group">
+                        <div class="flex items-center justify-center p-4 transition-transform group-hover:scale-110" style="height: 200px;">
+                            <div class="absolute inset-0 opacity-20 bg-gradient-to-b from-transparent to-black"></div>
+                            <img class="object-contain w-full h-full" :src="'{{ url('storage') }}/' + product.images[0]" :alt="product.name">
                         </div>
-                        <div class="relative px-6 pb-6 mt-6 text-white">
-                            <span class="block -mb-1 opacity-75" x-text="product.category"></span>
-                            <div class="flex justify-between">
-                                <span class="block text-xl font-semibold" x-text="product.name"></span>
-                                <span class="flex items-center block px-3 py-2 text-xs font-bold leading-none text-teal-500 bg-white rounded-full"
-                                    x-text="`$${parseFloat(product.price).toFixed(2)}`"></span>
+                        <div class="flex flex-col justify-between flex-grow p-4 text-white">
+                            <div>
+                                <span class="block mb-1 text-sm opacity-75" x-text="product.category"></span>
+                                <h3 class="text-xl font-semibold" x-text="product.name"></h3>
+                            </div>
+                            <div class="flex justify-between items-center mt-4">
+                                <span class="text-lg font-bold" x-text="new Intl.NumberFormat('en-US', { style: 'currency', currency: 'XAF' }).format(product.price)"></span>
+                                <button class="px-3 py-1 text-sm font-bold text-blue-500 bg-white rounded-full hover:bg-blue-100 transition-colors">
+                                    Add to Cart
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -146,8 +141,8 @@
         </div>
     </div>
     <div class="flex justify-center mt-4">
-        <button @click="prev(); stopAutoSlide()" class="px-4 py-2 mx-2 text-white bg-blue-500 rounded-full">&lt; Prev</button>
-        <button @click="next(); stopAutoSlide()" class="px-4 py-2 mx-2 text-white bg-blue-500 rounded-full">Next &gt;</button>
+        <button @click="prev(); stopAutoSlide()" class="px-4 py-2 mx-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-colors">&lt; Prev</button>
+        <button @click="next(); stopAutoSlide()" class="px-4 py-2 mx-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-colors">Next &gt;</button>
     </div>
 </section>
 

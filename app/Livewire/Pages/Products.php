@@ -31,7 +31,7 @@ class Products extends Component
     public $on_sale;
 
     #[Url]
-    public $price_range = 300000;
+    public $price_range = 0;
 
     #[Url]
     public $sort = 'latest';
@@ -40,7 +40,7 @@ class Products extends Component
     {
         $total_count = CartManagement::AddItemsToCart($product_id);
         $this->dispatch('update-cart-count', total_count: $total_count)->to(Navbar::class);
-        if($total_count){
+        if ($total_count) {
             return session()->flash('success');
         }
 
@@ -58,44 +58,68 @@ class Products extends Component
      */
     public function render()
     {
-        // Initialize a query builder for the Product model with an active status filter
-        $products = Product::query()->where('is_active', 1);
+        // Retrieve all products from the database initially
+        $allProducts = Product::all();
 
-        // If categories are selected, add a whereIn clause to the query
-        if (! empty($this->select_categories)) {
-            $products->whereIn('category_id', $this->select_categories);
+        // Start a query on the Product model
+        $query = Product::query();
+
+        $filtersApplied = false;
+
+        // If categories are selected, filter the query
+        if (!empty($this->select_categories)) {
+            $query->whereIn('category_id', $this->select_categories);
+            $filtersApplied = true;
         }
 
-        // If brands are selected, add a whereIn clause to the query
-        if (! empty($this->select_brands)) {
-            $products->whereIn('brand_id', $this->select_brands);
+        // If brands are selected, filter the query
+        if (!empty($this->select_brands)) {
+            $query->whereIn('brand_id', $this->select_brands);
+            $filtersApplied = true;
         }
 
+        // If featured products are selected, filter the query
         if ($this->featured) {
-            $products->where('is_featured', 1);
+            $query->where('is_featured', true);
+            $filtersApplied = true;
         }
 
+        // If on-sale products are selected, filter the query
         if ($this->on_sale) {
-            $products->where('on_sale', 1);
+            $query->where('on_sale', true);
+            $filtersApplied = true;
         }
 
+        // If price range is set, filter the query
         if ($this->price_range) {
-            $products->whereBetween('price', [0, $this->price_range]);
+            $query->whereBetween('price', [0, $this->price_range]);
+            $filtersApplied = true;
         }
 
+        // Apply sorting
         if ($this->sort == 'latest') {
-            $products->latest();
+            $query->orderBy('created_at', 'desc');
+            $filtersApplied = true;
+        } elseif ($this->sort == 'price_asc') {
+            $query->orderBy('price', 'asc');
+            $filtersApplied = true;
+        } elseif ($this->sort == 'price_desc') {
+            $query->orderBy('price', 'desc');
+            $filtersApplied = true;
         }
 
-        if ($this->sort = 'price') {
-            $products->OrderBy('price');
+        // Check if any filters were applied, then paginate the filtered products, otherwise paginate all products
+        if ($filtersApplied) {
+            $products = $query->paginate(6);
+        } else {
+            $products = Product::paginate(6);
         }
 
-        // Paginate the filtered products and pass them to the view along with brands and categories
+        // Return the view with products, brands, and categories
         return view('livewire.pages.products', [
-            'products' => $products->paginate(6),
-            'brands' => Brand::where('is_active', 1)->get(['id', 'name', 'slug']),
-            'categories' => Category::where('is_active', 1)->get(),
+            'products' => $products,
+            'brands' => Brand::all(),
+            'categories' => Category::all(),
         ]);
     }
 }
