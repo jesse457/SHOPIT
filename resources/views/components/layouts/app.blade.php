@@ -31,6 +31,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <title>{{ $title ?? 'JOBIT' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @filamentStyles
     @livewireStyles
 </head>
 
@@ -41,16 +42,8 @@
     </main>
     @livewire('partials.footer')
     @livewireScripts
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function () {
-        var successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            successMessage.style.display = 'none';
-        }
-    }, 2000); // 5000 milliseconds = 5 seconds
-});
-    </script>
+    @filamentScripts
+
 </body>
 
 </html>

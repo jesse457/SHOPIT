@@ -5,6 +5,7 @@ namespace App\Livewire\Pages;
 use App\Helpers\CartManagement;
 use App\Livewire\Partials\Navbar;
 use App\Models\Product;
+use Filament\Notifications\Notification;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -20,9 +21,16 @@ class ProductDetail extends Component
     }
     public function addToCart($product_id)
     {
+        Notification::make()
+        ->title('Saved successfully')
+        ->success()
+        ->send();
         $total_count = CartManagement::AddItemsToCart($product_id,$this->quantity);
         $this->dispatch('update-cart-count', total_count: $total_count)->to(Navbar::class);
-
+        Notification::make()
+        ->title('Saved successfully')
+        ->success()
+        ->send();
         // $this->alert('success','Product added to Cart ',[
         //     'position' => 'bottom-end',
         //     'timer' => 3000,
