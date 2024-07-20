@@ -40,6 +40,7 @@ class LatestOrder extends BaseWidget
                         'processing' => 'warning',
                         'shipped' => 'success',
                         'delivered' => 'success',
+                        'paid' => 'primary',
                         'cancelled' => 'danger',
                     })
                     ->searchable()

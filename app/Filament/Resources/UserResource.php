@@ -65,7 +65,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                 ->dateTime()
                 ->sortable()
-            ])
+            ])->modifyQueryUsing(function ($query){
+                $query->where('is_admin',false);
+            })
             ->filters([
                 //
             ])
@@ -84,6 +86,10 @@ class UserResource extends Resource
     return static::getModel()::count();
 }
 
+public static function getTableQuery(): ?string
+{
+    return User::where('is_admin',false);
+}
 public static function getNavigationBadgeColor(): ?string
 {
     return static::getModel()::count() > 10 ? 'warning' : 'primary';
