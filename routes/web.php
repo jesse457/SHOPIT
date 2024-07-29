@@ -12,6 +12,7 @@ use App\Livewire\Pages\MyOrders;
 use App\Livewire\Pages\ProductDetail;
 use App\Livewire\Pages\Products;
 use App\Livewire\Pages\SucessPage;
+use App\Livewire\Test;
 use Illuminate\Support\Facades\Route;
 
 
@@ -23,6 +24,7 @@ Route::group([], function () {
     Route::get('products', Products::class)->name('products');
     Route::get('cart', Carts::class)->name('cart');
     Route::get('products/{slug}', ProductDetail::class)->name('product.detail');
+    Route::get('test', Test::class);
 })->middleware(TrackVisitors::class);
 
 

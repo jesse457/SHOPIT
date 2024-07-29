@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -24,9 +25,9 @@ class Login extends Component
             'password' => 'required|min:2|max:255',
         ]);
 
-        if (!auth()->attempt(['email' => $this->email, 'password' => $this->password])) {
+        if (!Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
             session()->flash('error', 'Invalid credentials');
-            return session()->flash('error', 'Invalid credentials');
+            return redirect('/');
         }
 
         return redirect()->intended();
