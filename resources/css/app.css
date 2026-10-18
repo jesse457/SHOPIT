@@ -1,11 +1,223 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0.6,200;0.7,200;0.8,200;0.9,200;1,200..1000&display=swap');
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@source '../views';
+@source '../js/**/*.{ts,tsx}';
 
+@custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ |--------------------------------------------------------------------------
+ | Semantic palette
+ |--------------------------------------------------------------------------
+ | One token set, swapped under .dark. Components never hardcode a hex value;
+ | every surface, line and text colour reads from these variables.
+ */
 
+:root {
+    --canvas: #f6f2ea;
+    --surface: #fbf9f4;
+    --raised: #efe9df;
+    --ink: #171410;
+    --soft: #4c463f;
+    --muted: #6b635a;
+    --line: #ded6c9;
+    --clay: #9c451f;
+    --clay-strong: #7f3415;
+    --moss: #4a5a43;
+    --sun: #7a560c;
+    --danger: #a12a1f;
+    --success: #2f6b48;
+    color-scheme: light;
+}
 
+.dark {
+    --canvas: #141210;
+    --surface: #1d1a17;
+    --raised: #26221e;
+    --ink: #f3eee6;
+    --soft: #c8bfb3;
+    --muted: #a89f94;
+    --line: #38322c;
+    --clay: #e08a5f;
+    --clay-strong: #f0a37c;
+    --moss: #9db595;
+    --sun: #d8b45a;
+    --danger: #ef8a7e;
+    --success: #86c9a3;
+    color-scheme: dark;
+}
 
+@theme {
+    --font-sans: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
 
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+
+    --shadow-soft: 0 1px 0 rgb(23 20 16 / 0.04), 0 18px 48px -32px rgb(23 20 16 / 0.32);
+
+    --breakpoint-3xl: 2000px;
+}
+
+@theme inline {
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-raised: var(--raised);
+    --color-ink: var(--ink);
+    --color-soft: var(--soft);
+    --color-muted: var(--muted);
+    --color-line: var(--line);
+    --color-clay: var(--clay);
+    --color-clay-strong: var(--clay-strong);
+    --color-moss: var(--moss);
+    --color-sun: var(--sun);
+    --color-danger: var(--danger);
+    --color-success: var(--success);
+}
+
+@layer base {
+    * {
+        border-color: var(--color-line);
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        min-height: 100dvh;
+        background-color: var(--color-canvas);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        font-size: 15px;
+        line-height: 1.6;
+        letter-spacing: -0.011em;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        line-height: 1.02;
+        text-wrap: balance;
+    }
+
+    p {
+        text-wrap: pretty;
+    }
+
+    ::selection {
+        background: var(--color-clay);
+        color: #fffaf3;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-clay);
+        outline-offset: 2px;
+    }
+
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+
+    table {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Paper grain: fixed, non-interactive, and cheap to paint. */
+    body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        pointer-events: none;
+        opacity: 0.035;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    }
+
+    .dark body::after {
+        opacity: 0.06;
+    }
+}
+
+@layer components {
+    .container-shop {
+        width: 100%;
+        max-width: 1440px;
+        margin-inline: auto;
+        padding-inline: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .container-shop {
+            padding-inline: 2rem;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .container-shop {
+            padding-inline: 3rem;
+        }
+    }
+
+    .eyebrow {
+        font-family: var(--font-sans);
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+    }
+
+    .link-underline {
+        background-image: linear-gradient(currentColor, currentColor);
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 0% 1px;
+        transition: background-size 240ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .link-underline:hover,
+    .link-underline:focus-visible {
+        background-size: 100% 1px;
+    }
+
+    .hairline {
+        border-top: 1px solid var(--color-line);
+    }
+
+    .no-scrollbar {
+        scrollbar-width: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

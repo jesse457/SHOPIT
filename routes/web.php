@@ -1,43 +1,31 @@
 <?php
 
-use App\Http\Middleware\CheckIsField;
-use App\Http\Middleware\TrackVisitors;
-use App\Livewire\Home;
-use App\Livewire\Pages\CancelPage;
-use App\Livewire\Pages\Carts;
-use App\Livewire\Pages\Categories;
-use App\Livewire\Pages\CheckOut;
-use App\Livewire\Pages\MyOrderDetail;
-use App\Livewire\Pages\MyOrders;
-use App\Livewire\Pages\ProductDetail;
-use App\Livewire\Pages\Products;
-use App\Livewire\Pages\SucessPage;
-use App\Livewire\Test;
+use App\Http\Controllers\Storefront\CartController;
+use App\Http\Controllers\Storefront\CategoryController;
+use App\Http\Controllers\Storefront\HomeController;
+use App\Http\Controllers\Storefront\ProductController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
+Route::middleware('track_visitors')->group(function (): void {
+    Route::get('/', HomeController::class)->name('home');
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
 
+    Route::get('cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('cart/items', [CartController::class, 'store'])->name('cart.items.store');
+    Route::patch('cart/items/{product:slug}', [CartController::class, 'update'])->name('cart.items.update');
+    Route::delete('cart/items/{product:slug}', [CartController::class, 'destroy'])->name('cart.items.destroy');
+    Route::delete('cart', [CartController::class, 'clear'])->name('cart.clear');
+});
 
+Route::fallback(function (Request $request) {
+    abort_if($request->expectsJson(), 404);
 
-Route::group([], function () {
-    Route::get('/', Home::class)->name('home');
-    Route::get('categories', Categories::class)->name('categories');
-    Route::get('products', Products::class)->name('products');
-    Route::get('cart', Carts::class)->name('cart');
-    Route::get('products/{slug}', ProductDetail::class)->name('product.detail');
-    Route::get('test', Test::class);
-})->middleware(TrackVisitors::class);
-
-
-
-
-Route::middleware(CheckIsField::class)->group(function () {
-    Route::get('checkout', CheckOut::class);
-    Route::get('my-orders', MyOrders::class);
-    Route::get('sucess', SucessPage::class)->name('sucess');
-    Route::get('cancelled', CancelPage::class)->name('cancelled');
-    Route::get('my-orders/{order}', MyOrderDetail::class);
-}
-
-);
-
-require_once 'auth.php';
+    return Inertia::render('Error/NotFound')
+        ->toResponse($request)
+        ->setStatusCode(404);
+});
