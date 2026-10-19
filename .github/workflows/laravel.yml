@@ -45,6 +45,9 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Generate Wayfinder helpers
+        run: php artisan wayfinder:generate --with-form --no-interaction
+
       - name: Lint frontend
         run: npm run lint:check
 
