@@ -152,6 +152,20 @@ class CartService
     }
 
     /**
+     * @param  array<int, array{product_id: int, quantity: int}>  $items
+     */
+    public function restore(array $items): void
+    {
+        $cart = [];
+
+        foreach ($items as $item) {
+            $cart[(int) $item['product_id']] = (int) $item['quantity'];
+        }
+
+        $this->write($cart);
+    }
+
+    /**
      * @param  array<int, int>  $cart
      */
     private function write(array $cart): void

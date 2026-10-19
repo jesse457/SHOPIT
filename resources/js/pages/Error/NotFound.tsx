@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 
 import PageMeta from '@/components/common/PageMeta';
 import { ButtonLink } from '@/components/ui/button/Button';
+import { home } from '@/routes';
+import { index as productsIndex } from '@/routes/products';
 
 export default function NotFound() {
     return (
@@ -23,18 +25,21 @@ export default function NotFound() {
                     </h1>
                     <div>
                         <p className="max-w-[44ch] text-[15px] leading-relaxed text-soft">
-                            The link may be old, or the piece may have sold out and
-                            left the edit. Everything current is one click away.
+                            The link may be old, or the piece may have sold out
+                            and left the edit. Everything current is one click
+                            away.
                         </p>
                         <div className="mt-6 flex flex-wrap gap-3">
                             <ButtonLink
-                                href="/products"
-                                endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                                href={productsIndex.url()}
+                                endIcon={
+                                    <ArrowRight size={15} aria-hidden="true" />
+                                }
                             >
                                 Shop the edit
                             </ButtonLink>
                             <Link
-                                href="/"
+                                href={home.url()}
                                 className="flex h-11 items-center gap-2 px-1 text-[13px] font-medium text-soft transition-colors hover:text-ink"
                             >
                                 <ArrowLeft size={14} aria-hidden="true" />

@@ -28,6 +28,15 @@ final class Media
         return Storage::disk('public')->url($path);
     }
 
+    public static function delete(?string $path): void
+    {
+        if (blank($path) || Str::startsWith($path, ['http://', 'https://', '//', '/'])) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
+    }
+
     /**
      * @param  array<int, string>|null  $paths
      * @return array<int, string>

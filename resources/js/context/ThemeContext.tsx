@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import type { ReactNode } from 'react';
 
 import type { Theme } from '@/types';
@@ -18,7 +25,9 @@ function currentDocumentTheme(): Theme {
         return 'light';
     }
 
-    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    return document.documentElement.classList.contains('dark')
+        ? 'dark'
+        : 'light';
 }
 
 function applyTheme(theme: Theme): void {
@@ -80,7 +89,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         [theme, setTheme, toggleTheme],
     );
 
-    return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+    return (
+        <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    );
 }
 
 export function useTheme(): ThemeContextValue {

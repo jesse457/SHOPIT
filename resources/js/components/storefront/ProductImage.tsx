@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -11,27 +11,22 @@ interface ProductImageProps {
     priority?: boolean;
 }
 
-export default function ProductImage({
-    src,
-    alt,
-    className,
-    priority = false,
-}: ProductImageProps) {
-    const [current, setCurrent] = useState(src || PLACEHOLDER);
-
-    useEffect(() => {
-        setCurrent(src || PLACEHOLDER);
-    }, [src]);
+function ImageSource({ src, alt, className, priority }: ProductImageProps) {
+    const [failed, setFailed] = useState(false);
 
     return (
         <img
-            src={current}
+            src={failed || !src ? PLACEHOLDER : src}
             alt={alt}
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}
             decoding="async"
-            onError={() => setCurrent(PLACEHOLDER)}
+            onError={() => setFailed(true)}
             className={cn('h-full w-full object-cover', className)}
         />
     );
+}
+
+export default function ProductImage(props: ProductImageProps) {
+    return <ImageSource key={props.src ?? 'placeholder'} {...props} />;
 }

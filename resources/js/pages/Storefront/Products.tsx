@@ -1,5 +1,5 @@
 import { FunnelSimple, MagnifyingGlass, X } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import PageMeta from '@/components/common/PageMeta';
@@ -41,21 +41,11 @@ export default function Products({
     priceBounds,
 }: ProductsProps) {
     const { apply } = useCatalogFilters(filters);
-    const [search, setSearch] = useState(filters.q);
-    const [minPrice, setMinPrice] = useState(filters.min_price?.toString() ?? '');
-    const [maxPrice, setMaxPrice] = useState(filters.max_price?.toString() ?? '');
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-    useEffect(() => {
-        setSearch(filters.q);
-        setMinPrice(filters.min_price?.toString() ?? '');
-        setMaxPrice(filters.max_price?.toString() ?? '');
-    }, [filters]);
-
-    const meta = products.meta;
-    const currentPage = meta?.current_page ?? 1;
-    const lastPage = meta?.last_page ?? 1;
-    const total = meta?.total ?? products.data.length;
+    const currentPage = products.current_page ?? 1;
+    const lastPage = products.last_page ?? 1;
+    const total = products.total ?? products.data.length;
 
     const activeCount =
         filters.categories.length +
@@ -83,15 +73,19 @@ export default function Products({
 
     const submitSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        apply({ q: search });
+        const form = new FormData(event.currentTarget);
+        apply({ q: String(form.get('q') ?? '') });
     };
 
     const submitPrice = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const min = String(form.get('min_price') ?? '').trim();
+        const max = String(form.get('max_price') ?? '').trim();
 
         apply({
-            min_price: minPrice === '' ? null : Number(minPrice),
-            max_price: maxPrice === '' ? null : Number(maxPrice),
+            min_price: min === '' ? null : Number(min),
+            max_price: max === '' ? null : Number(max),
         });
     };
 
@@ -117,7 +111,9 @@ export default function Products({
             label: category?.name ?? slug,
             onRemove: () =>
                 apply({
-                    categories: filters.categories.filter((item) => item !== slug),
+                    categories: filters.categories.filter(
+                        (item) => item !== slug,
+                    ),
                 }),
         });
     });
@@ -151,8 +147,14 @@ export default function Products({
     }
 
     if (filters.min_price !== null || filters.max_price !== null) {
-        const from = filters.min_price !== null ? formatCurrency(filters.min_price) : 'Any';
-        const to = filters.max_price !== null ? formatCurrency(filters.max_price) : 'Any';
+        const from =
+            filters.min_price !== null
+                ? formatCurrency(filters.min_price)
+                : 'Any';
+        const to =
+            filters.max_price !== null
+                ? formatCurrency(filters.max_price)
+                : 'Any';
         chips.push({
             key: 'price',
             label: `${from} to ${to}`,
@@ -186,7 +188,7 @@ export default function Products({
                             Filter it down to the few things worth keeping.
                         </p>
                     </div>
-                    <p className="text-[12px] text-muted tabular">
+                    <p className="tabular text-[12px] text-muted">
                         {total} {total === 1 ? 'piece' : 'pieces'}
                     </p>
                 </div>
@@ -215,7 +217,12 @@ export default function Products({
                             )}
                         </div>
 
-                        <form onSubmit={submitSearch} role="search" className="relative mt-5">
+                        <form
+                            key={filters.q}
+                            onSubmit={submitSearch}
+                            role="search"
+                            className="relative mt-5"
+                        >
                             <label htmlFor="catalog-search" className="sr-only">
                                 Search products
                             </label>
@@ -226,9 +233,9 @@ export default function Products({
                             />
                             <input
                                 id="catalog-search"
+                                name="q"
                                 type="search"
-                                value={search}
-                                onChange={(event) => setSearch(event.target.value)}
+                                defaultValue={filters.q}
                                 placeholder="Search the edit"
                                 className="h-10 w-full border-b border-line bg-transparent pr-2 pl-5 text-[13px] text-ink placeholder:text-muted focus:border-ink focus:outline-none"
                             />
@@ -246,12 +253,16 @@ export default function Products({
                                     >
                                         <input
                                             type="checkbox"
-                                            checked={filters.categories.includes(category.slug)}
-                                            onChange={() => toggleCategory(category.slug)}
+                                            checked={filters.categories.includes(
+                                                category.slug,
+                                            )}
+                                            onChange={() =>
+                                                toggleCategory(category.slug)
+                                            }
                                             className="h-4 w-4 rounded-xs border-line accent-clay"
                                         />
                                         <span>{category.name}</span>
-                                        <span className="ml-auto text-[11px] text-muted tabular">
+                                        <span className="tabular ml-auto text-[11px] text-muted">
                                             {category.products_count ?? 0}
                                         </span>
                                     </label>
@@ -271,12 +282,16 @@ export default function Products({
                                     >
                                         <input
                                             type="checkbox"
-                                            checked={filters.brands.includes(brand.slug)}
-                                            onChange={() => toggleBrand(brand.slug)}
+                                            checked={filters.brands.includes(
+                                                brand.slug,
+                                            )}
+                                            onChange={() =>
+                                                toggleBrand(brand.slug)
+                                            }
                                             className="h-4 w-4 rounded-xs border-line accent-clay"
                                         />
                                         <span>{brand.name}</span>
-                                        <span className="ml-auto text-[11px] text-muted tabular">
+                                        <span className="tabular ml-auto text-[11px] text-muted">
                                             {brand.products_count ?? 0}
                                         </span>
                                     </label>
@@ -294,7 +309,9 @@ export default function Products({
                                         type="checkbox"
                                         checked={filters.featured}
                                         onChange={() =>
-                                            apply({ featured: !filters.featured })
+                                            apply({
+                                                featured: !filters.featured,
+                                            })
                                         }
                                         className="h-4 w-4 rounded-xs border-line accent-clay"
                                     />
@@ -314,7 +331,11 @@ export default function Products({
                             </div>
                         </div>
 
-                        <form onSubmit={submitPrice} className="mt-7 border-t border-line pt-5">
+                        <form
+                            key={`${filters.min_price ?? 'min'}-${filters.max_price ?? 'max'}`}
+                            onSubmit={submitPrice}
+                            className="mt-7 border-t border-line pt-5"
+                        >
                             <p className="text-[11px] font-medium tracking-[0.14em] text-muted uppercase">
                                 Price
                             </p>
@@ -324,13 +345,15 @@ export default function Products({
                                 </label>
                                 <input
                                     id="min-price"
+                                    name="min_price"
                                     type="number"
                                     inputMode="numeric"
                                     min={0}
                                     max={priceBounds.max}
-                                    value={minPrice}
-                                    onChange={(event) => setMinPrice(event.target.value)}
-                                    placeholder={String(Math.floor(priceBounds.min))}
+                                    defaultValue={filters.min_price ?? ''}
+                                    placeholder={String(
+                                        Math.floor(priceBounds.min),
+                                    )}
                                     className="h-10 w-full rounded-sm border border-line bg-transparent px-2.5 text-[12px] text-ink placeholder:text-muted focus:border-ink focus:outline-none"
                                 />
                                 <span className="text-muted" aria-hidden="true">
@@ -341,13 +364,15 @@ export default function Products({
                                 </label>
                                 <input
                                     id="max-price"
+                                    name="max_price"
                                     type="number"
                                     inputMode="numeric"
                                     min={0}
                                     max={priceBounds.max}
-                                    value={maxPrice}
-                                    onChange={(event) => setMaxPrice(event.target.value)}
-                                    placeholder={String(Math.ceil(priceBounds.max))}
+                                    defaultValue={filters.max_price ?? ''}
+                                    placeholder={String(
+                                        Math.ceil(priceBounds.max),
+                                    )}
                                     className="h-10 w-full rounded-sm border border-line bg-transparent px-2.5 text-[12px] text-ink placeholder:text-muted focus:border-ink focus:outline-none"
                                 />
                             </div>
@@ -367,14 +392,16 @@ export default function Products({
                         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
                             <button
                                 type="button"
-                                onClick={() => setIsFiltersOpen((open) => !open)}
+                                onClick={() =>
+                                    setIsFiltersOpen((open) => !open)
+                                }
                                 aria-expanded={isFiltersOpen}
                                 className="flex items-center gap-2 text-[12px] font-medium text-soft hover:text-ink lg:hidden"
                             >
                                 <FunnelSimple size={16} aria-hidden="true" />
                                 Filters
                                 {activeCount > 0 && (
-                                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-clay px-1 text-[10px] text-canvas tabular">
+                                    <span className="tabular flex h-5 min-w-5 items-center justify-center rounded-full bg-clay px-1 text-[10px] text-canvas">
                                         {activeCount}
                                     </span>
                                 )}
@@ -392,15 +419,22 @@ export default function Products({
                                     value={filters.sort}
                                     onChange={(event) =>
                                         apply({
-                                            sort: event.target.value as CatalogFilters['sort'],
+                                            sort: event.target
+                                                .value as CatalogFilters['sort'],
                                         })
                                     }
                                     className="h-9 rounded-sm border border-line bg-transparent px-2.5 text-[12px] text-ink focus:border-ink focus:outline-none"
                                 >
                                     <option value="latest">Latest</option>
-                                    <option value="price_asc">Price: low to high</option>
-                                    <option value="price_desc">Price: high to low</option>
-                                    <option value="name_asc">Name: A to Z</option>
+                                    <option value="price_asc">
+                                        Price: low to high
+                                    </option>
+                                    <option value="price_desc">
+                                        Price: high to low
+                                    </option>
+                                    <option value="name_asc">
+                                        Name: A to Z
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -432,7 +466,10 @@ export default function Products({
                             {products.data.length > 0 ? (
                                 <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3 xl:grid-cols-4">
                                     {products.data.map((product) => (
-                                        <ProductCard key={product.id} product={product} />
+                                        <ProductCard
+                                            key={product.id}
+                                            product={product}
+                                        />
                                     ))}
                                 </div>
                             ) : (
@@ -459,8 +496,8 @@ export default function Products({
                                 currentPage={currentPage}
                                 lastPage={lastPage}
                                 total={total}
-                                from={meta?.from ?? null}
-                                to={meta?.to ?? null}
+                                from={products.from ?? null}
+                                to={products.to ?? null}
                                 onPageChange={(page) => apply({}, { page })}
                             />
                         )}

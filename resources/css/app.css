@@ -48,15 +48,20 @@
 }
 
 @theme {
-    --font-sans: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-    --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+    --font-sans:
+        'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
+        'Helvetica Neue', Arial, sans-serif;
+    --font-display:
+        Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua',
+        'Times New Roman', serif;
 
     --radius-xs: 2px;
     --radius-sm: 4px;
     --radius-md: 6px;
     --radius-lg: 10px;
 
-    --shadow-soft: 0 1px 0 rgb(23 20 16 / 0.04), 0 18px 48px -32px rgb(23 20 16 / 0.32);
+    --shadow-soft:
+        0 1px 0 rgb(23 20 16 / 0.04), 0 18px 48px -32px rgb(23 20 16 / 0.32);
 
     --breakpoint-3xl: 2000px;
 }

@@ -1,6 +1,6 @@
 import { createInertiaApp } from '@inertiajs/react';
-import { createRoot } from 'react-dom/client';
 import type { ReactNode } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import { ThemeProvider } from './context/ThemeContext';
 import AdminLayout from './layouts/AdminLayout';
@@ -11,7 +11,9 @@ const appName = import.meta.env.VITE_APP_NAME || 'SHOPIT';
 
 type LayoutFn = (page: ReactNode) => ReactNode;
 
-const withStorefront: LayoutFn = (page) => <StorefrontLayout>{page}</StorefrontLayout>;
+const withStorefront: LayoutFn = (page) => (
+    <StorefrontLayout>{page}</StorefrontLayout>
+);
 const withAdmin: LayoutFn = (page) => <AdminLayout>{page}</AdminLayout>;
 const withAuth: LayoutFn = (page) => <AuthLayout>{page}</AuthLayout>;
 

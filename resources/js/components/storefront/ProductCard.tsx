@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 
-import Badge from '@/components/ui/badge/Badge';
 import ProductImage from '@/components/storefront/ProductImage';
+import Badge from '@/components/ui/badge/Badge';
 import { formatCurrency } from '@/lib/utils';
 import { show as productShow } from '@/routes/products';
 import type { Product } from '@/types';
@@ -36,14 +36,16 @@ export default function ProductCard({ product }: { product: Product }) {
             <div className="mt-3.5">
                 <div className="flex items-center justify-between gap-3">
                     <p className="truncate text-[11px] font-medium tracking-[0.1em] text-muted uppercase">
-                        {product.brand?.name ?? product.category?.name ?? 'SHOPIT'}
+                        {product.brand?.name ??
+                            product.category?.name ??
+                            'SHOPIT'}
                     </p>
                     <div className="flex shrink-0 items-center gap-1.5">
                         {product.on_sale && hasComparePrice && (
                             <Badge tone="clay">Sale</Badge>
                         )}
                         {product.in_stock && product.is_low_stock && (
-                            <span className="text-[10px] font-medium tracking-[0.08em] text-sun tabular">
+                            <span className="tabular text-[10px] font-medium tracking-[0.08em] text-sun">
                                 {product.stock_quantity} left
                             </span>
                         )}
@@ -55,11 +57,11 @@ export default function ProductCard({ product }: { product: Product }) {
                 </h3>
 
                 <div className="mt-1.5 flex items-baseline gap-2">
-                    <span className="text-[13px] font-medium text-ink tabular">
+                    <span className="tabular text-[13px] font-medium text-ink">
                         {formatCurrency(product.price)}
                     </span>
                     {hasComparePrice && (
-                        <span className="text-[12px] text-muted line-through tabular">
+                        <span className="tabular text-[12px] text-muted line-through">
                             {formatCurrency(product.compare_at_price)}
                         </span>
                     )}

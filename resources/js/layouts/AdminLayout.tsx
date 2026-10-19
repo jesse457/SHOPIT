@@ -15,19 +15,27 @@ import {
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 
+import LogoutController from '@/actions/App/Http/Controllers/Auth/LogoutController';
 import SkipLink from '@/components/common/SkipLink';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import ToastProvider from '@/components/ui/toast/Toast';
 import { cn, initials } from '@/lib/utils';
+import { home } from '@/routes';
+import { dashboard as adminDashboard } from '@/routes/admin';
+import { index as adminBrandsIndex } from '@/routes/admin/brands';
+import { index as adminCategoriesIndex } from '@/routes/admin/categories';
+import { index as adminCustomersIndex } from '@/routes/admin/customers';
+import { index as adminOrdersIndex } from '@/routes/admin/orders';
+import { index as adminProductsIndex } from '@/routes/admin/products';
 import type { PageProps } from '@/types';
 
 const NAVIGATION = [
-    { href: '/admin', label: 'Dashboard', icon: SquaresFour },
-    { href: '/admin/orders', label: 'Orders', icon: Receipt },
-    { href: '/admin/products', label: 'Products', icon: Package },
-    { href: '/admin/categories', label: 'Categories', icon: Shapes },
-    { href: '/admin/brands', label: 'Brands', icon: Tag },
-    { href: '/admin/customers', label: 'Customers', icon: Users },
+    { href: adminDashboard.url(), label: 'Dashboard', icon: SquaresFour },
+    { href: adminOrdersIndex.url(), label: 'Orders', icon: Receipt },
+    { href: adminProductsIndex.url(), label: 'Products', icon: Package },
+    { href: adminCategoriesIndex.url(), label: 'Categories', icon: Shapes },
+    { href: adminBrandsIndex.url(), label: 'Brands', icon: Tag },
+    { href: adminCustomersIndex.url(), label: 'Customers', icon: Users },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -38,7 +46,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const closeSidebar = () => setIsSidebarOpen(false);
 
     const isActive = (href: string) =>
-        href === '/admin' ? url === '/admin' : url.startsWith(href);
+        href === adminDashboard.url()
+            ? url === adminDashboard.url()
+            : url.startsWith(href);
 
     const navigation = (
         <nav aria-label="Admin" className="flex flex-1 flex-col gap-1">
@@ -59,7 +69,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                                 : 'text-soft hover:bg-raised hover:text-ink',
                         )}
                     >
-                        <Icon size={17} weight={active ? 'fill' : 'regular'} aria-hidden="true" />
+                        <Icon
+                            size={17}
+                            weight={active ? 'fill' : 'regular'}
+                            aria-hidden="true"
+                        />
                         {item.label}
                     </Link>
                 );
@@ -87,7 +101,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 )}
             >
                 <div className="flex items-center justify-between px-1">
-                    <Link href="/admin" className="flex items-baseline gap-2">
+                    <Link
+                        href={adminDashboard.url()}
+                        className="flex items-baseline gap-2"
+                    >
                         <span className="font-display text-[26px] leading-none font-semibold">
                             SHOPIT
                         </span>
@@ -109,12 +126,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
                 <div className="mt-auto space-y-2 border-t border-line pt-4">
                     <Link
-                        href="/"
+                        href={home.url()}
                         className="flex items-center gap-3 rounded-sm px-3 py-2.5 text-[13px] font-medium text-soft transition-colors hover:bg-raised hover:text-ink"
                     >
                         <Storefront size={17} aria-hidden="true" />
                         View store
-                        <ArrowSquareOut size={13} className="ml-auto" aria-hidden="true" />
+                        <ArrowSquareOut
+                            size={13}
+                            className="ml-auto"
+                            aria-hidden="true"
+                        />
                     </Link>
                     <div className="flex items-center gap-3 rounded-sm px-3 py-2.5">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[11px] font-semibold text-canvas">
@@ -131,7 +152,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     </div>
                     <button
                         type="button"
-                        onClick={() => router.post('/logout')}
+                        onClick={() => router.post(LogoutController.url())}
                         className="flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-[13px] font-medium text-soft transition-colors hover:bg-raised hover:text-ink"
                     >
                         <SignOut size={17} aria-hidden="true" />
@@ -157,7 +178,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
                     <div className="flex items-center gap-2">
                         <Link
-                            href="/"
+                            href={home.url()}
                             className="hidden items-center gap-2 rounded-sm px-3 py-2 text-[12px] font-medium text-soft transition-colors hover:bg-raised hover:text-ink sm:flex"
                         >
                             <Storefront size={16} aria-hidden="true" />

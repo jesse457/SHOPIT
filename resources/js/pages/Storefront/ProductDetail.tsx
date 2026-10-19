@@ -7,7 +7,7 @@ import {
     Plus,
     Truck,
 } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import PageMeta from '@/components/common/PageMeta';
@@ -17,8 +17,8 @@ import Badge from '@/components/ui/badge/Badge';
 import { Button } from '@/components/ui/button/Button';
 import { formatCurrency } from '@/lib/utils';
 import { home } from '@/routes';
-import { show as categoryShow } from '@/routes/categories';
 import { store as cartStore } from '@/routes/cart/items';
+import { show as categoryShow } from '@/routes/categories';
 import { index as productsIndex } from '@/routes/products';
 import type { PageProps, Product } from '@/types';
 
@@ -27,7 +27,11 @@ interface ProductDetailProps {
     related: Product[];
 }
 
-export default function ProductDetail({ product, related }: ProductDetailProps) {
+export default function ProductDetail(props: ProductDetailProps) {
+    return <ProductDetailContent key={props.product.id} {...props} />;
+}
+
+function ProductDetailContent({ product, related }: ProductDetailProps) {
     const { shop } = usePage<PageProps>().props;
     const firstImage = product.images[0] ?? null;
     const [activeImage, setActiveImage] = useState<string | null>(firstImage);
@@ -35,14 +39,6 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
         product_id: product.id,
         quantity: 1,
     });
-
-    useEffect(() => {
-        setActiveImage(firstImage);
-        setData({
-            product_id: product.id,
-            quantity: 1,
-        });
-    }, [product.id, firstImage, setData]);
 
     const maxQuantity = Math.max(1, product.stock_quantity);
     const hasComparePrice =
@@ -75,7 +71,10 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
             />
 
             <div className="container-shop pt-6">
-                <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[11px] text-muted">
+                <nav
+                    aria-label="Breadcrumb"
+                    className="flex items-center gap-1.5 text-[11px] text-muted"
+                >
                     <Link href={home.url()} className="hover:text-ink">
                         Home
                     </Link>
@@ -92,7 +91,10 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
                         </>
                     ) : (
                         <>
-                            <Link href={productsIndex.url()} className="hover:text-ink">
+                            <Link
+                                href={productsIndex.url()}
+                                className="hover:text-ink"
+                            >
                                 Shop
                             </Link>
                             <span aria-hidden="true">/</span>
@@ -151,11 +153,11 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
                     </h1>
 
                     <div className="mt-5 flex items-baseline gap-3">
-                        <span className="text-[22px] font-medium text-ink tabular">
+                        <span className="tabular text-[22px] font-medium text-ink">
                             {formatCurrency(product.price)}
                         </span>
                         {hasComparePrice && (
-                            <span className="text-[15px] text-muted line-through tabular">
+                            <span className="tabular text-[15px] text-muted line-through">
                                 {formatCurrency(product.compare_at_price)}
                             </span>
                         )}
@@ -169,13 +171,17 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
 
                     <div className="mt-6 flex items-center gap-2 text-[12px]">
                         {!product.in_stock ? (
-                            <span className="font-medium text-danger">Sold out</span>
+                            <span className="font-medium text-danger">
+                                Sold out
+                            </span>
                         ) : product.is_low_stock ? (
                             <span className="font-medium text-sun">
                                 Only {product.stock_quantity} left
                             </span>
                         ) : (
-                            <span className="font-medium text-success">In stock</span>
+                            <span className="font-medium text-success">
+                                In stock
+                            </span>
                         )}
                         <span className="text-muted" aria-hidden="true">
                             /
@@ -197,7 +203,7 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
                                         <Minus size={13} aria-hidden="true" />
                                     </button>
                                     <span
-                                        className="w-9 text-center text-[13px] font-medium text-ink tabular"
+                                        className="tabular w-9 text-center text-[13px] font-medium text-ink"
                                         aria-live="polite"
                                     >
                                         {data.quantity}
@@ -239,7 +245,11 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
 
                     <div className="mt-7 space-y-3 border-t border-line pt-5 text-[12px] text-soft">
                         <p className="flex items-start gap-2.5">
-                            <Truck size={16} className="mt-0.5 shrink-0 text-clay" aria-hidden="true" />
+                            <Truck
+                                size={16}
+                                className="mt-0.5 shrink-0 text-clay"
+                                aria-hidden="true"
+                            />
                             Complimentary delivery over{' '}
                             {formatCurrency(
                                 shop.shipping.free_threshold,
@@ -249,7 +259,11 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
                             . Flat rate below that.
                         </p>
                         <p className="flex items-start gap-2.5">
-                            <CreditCard size={16} className="mt-0.5 shrink-0 text-clay" aria-hidden="true" />
+                            <CreditCard
+                                size={16}
+                                className="mt-0.5 shrink-0 text-clay"
+                                aria-hidden="true"
+                            />
                             Secure card checkout or cash on delivery.
                         </p>
                     </div>
@@ -264,7 +278,7 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
                                     aria-hidden="true"
                                 />
                             </summary>
-                            <p className="mt-3 whitespace-pre-line text-[13px] leading-relaxed text-soft">
+                            <p className="mt-3 text-[13px] leading-relaxed whitespace-pre-line text-soft">
                                 {product.description ??
                                     'A considered piece from the SHOPIT edit.'}
                             </p>
@@ -287,7 +301,8 @@ export default function ProductDetail({ product, related }: ProductDetailProps) 
                                     shop.currency,
                                     shop.currency_locale,
                                 )}
-                                , otherwise a flat {formatCurrency(
+                                , otherwise a flat{' '}
+                                {formatCurrency(
                                     shop.shipping.flat_rate,
                                     shop.currency,
                                     shop.currency_locale,

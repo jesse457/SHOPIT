@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 
 import PageMeta from '@/components/common/PageMeta';
 import { ButtonLink } from '@/components/ui/button/Button';
+import { home } from '@/routes';
+import { index as accountIndex } from '@/routes/account';
 
 export default function Forbidden() {
     return (
@@ -23,18 +25,20 @@ export default function Forbidden() {
                     </h1>
                     <div>
                         <p className="max-w-[44ch] text-[15px] leading-relaxed text-soft">
-                            This area belongs to store staff. If you think you should
-                            have access, sign in with the right account.
+                            This area belongs to store staff. If you think you
+                            should have access, sign in with the right account.
                         </p>
                         <div className="mt-6 flex flex-wrap gap-3">
                             <ButtonLink
-                                href="/"
-                                endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                                href={home.url()}
+                                endIcon={
+                                    <ArrowRight size={15} aria-hidden="true" />
+                                }
                             >
                                 Back to the store
                             </ButtonLink>
                             <Link
-                                href="/account"
+                                href={accountIndex.url()}
                                 className="flex h-11 items-center gap-2 px-1 text-[13px] font-medium text-soft transition-colors hover:text-ink"
                             >
                                 <ArrowLeft size={14} aria-hidden="true" />

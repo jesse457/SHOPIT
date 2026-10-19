@@ -10,25 +10,26 @@ import {
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 
+import { create as loginCreate } from '@/actions/App/Http/Controllers/Auth/LoginController';
+import { create as registerCreate } from '@/actions/App/Http/Controllers/Auth/RegisterController';
 import SkipLink from '@/components/common/SkipLink';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import ToastProvider from '@/components/ui/toast/Toast';
 import { formatCurrency } from '@/lib/utils';
+import { home } from '@/routes';
+import { index as accountIndex } from '@/routes/account';
+import { dashboard as adminDashboard } from '@/routes/admin';
+import { index as cartIndex } from '@/routes/cart';
+import { index as categoriesIndex } from '@/routes/categories';
+import { index as ordersIndex } from '@/routes/orders';
+import { index as productsIndex } from '@/routes/products';
 import type { PageProps } from '@/types';
 
-const PATHS = {
-    home: '/',
-    products: '/products',
-    categories: '/categories',
-    cart: '/cart',
-    login: '/login',
-    register: '/register',
-    orders: '/orders',
-    account: '/account',
-    admin: '/admin',
-};
-
-export default function StorefrontLayout({ children }: { children: ReactNode }) {
+export default function StorefrontLayout({
+    children,
+}: {
+    children: ReactNode;
+}) {
     const { auth, cart, navCategories, shop } = usePage<PageProps>().props;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const year = new Date().getFullYear();
@@ -44,7 +45,11 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                 <div className="container-shop flex h-9 items-center justify-center">
                     <p className="text-[10px] leading-none font-medium tracking-[0.14em] uppercase">
                         Complimentary delivery over{' '}
-                        {formatCurrency(shop.shipping.free_threshold, shop.currency, shop.currency_locale)}
+                        {formatCurrency(
+                            shop.shipping.free_threshold,
+                            shop.currency,
+                            shop.currency_locale,
+                        )}
                     </p>
                 </div>
             </div>
@@ -68,22 +73,25 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                         </button>
 
                         <Link
-                            href={PATHS.home}
+                            href={home.url()}
                             className="font-display text-[27px] leading-none font-semibold tracking-[0.01em] text-ink"
                             aria-label="SHOPIT home"
                         >
                             SHOPIT
                         </Link>
 
-                        <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
+                        <nav
+                            aria-label="Main"
+                            className="hidden items-center gap-6 lg:flex"
+                        >
                             <Link
-                                href={PATHS.products}
+                                href={productsIndex.url()}
                                 className="link-underline text-[13px] font-medium text-soft transition-colors hover:text-ink"
                             >
                                 Shop
                             </Link>
                             <Link
-                                href={PATHS.categories}
+                                href={categoriesIndex.url()}
                                 className="link-underline text-[13px] font-medium text-soft transition-colors hover:text-ink"
                             >
                                 Departments
@@ -91,7 +99,9 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                             {navCategories.slice(0, 3).map((category) => (
                                 <Link
                                     key={category.id}
-                                    href={`${PATHS.products}?category=${category.slug}`}
+                                    href={productsIndex.url({
+                                        query: { category: category.slug },
+                                    })}
                                     className="link-underline text-[13px] font-medium text-soft transition-colors hover:text-ink"
                                 >
                                     {category.name}
@@ -102,12 +112,15 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
 
                     <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                         <form
-                            action={PATHS.products}
+                            action={productsIndex.url()}
                             method="get"
                             role="search"
                             className="relative hidden items-center xl:flex"
                         >
-                            <label htmlFor="storefront-search" className="sr-only">
+                            <label
+                                htmlFor="storefront-search"
+                                className="sr-only"
+                            >
                                 Search products
                             </label>
                             <MagnifyingGlass
@@ -127,7 +140,7 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                         <ThemeToggle />
 
                         <Link
-                            href={user ? PATHS.account : PATHS.login}
+                            href={user ? accountIndex.url() : loginCreate.url()}
                             aria-label={user ? 'Your account' : 'Sign in'}
                             title={user ? 'Your account' : 'Sign in'}
                             className="flex h-10 w-10 items-center justify-center rounded-sm text-soft transition-colors hover:bg-raised hover:text-ink"
@@ -137,7 +150,7 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
 
                         {user?.is_admin && (
                             <Link
-                                href={PATHS.admin}
+                                href={adminDashboard.url()}
                                 className="hidden items-center gap-1 rounded-sm px-3 py-2 text-[11px] font-medium tracking-[0.12em] text-clay uppercase transition-colors hover:bg-raised sm:flex"
                             >
                                 Admin
@@ -146,14 +159,14 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                         )}
 
                         <Link
-                            href={PATHS.cart}
+                            href={cartIndex.url()}
                             aria-label={`Cart with ${cart.count} item${cart.count === 1 ? '' : 's'}`}
                             title="Cart"
                             className="relative flex h-10 w-10 items-center justify-center rounded-sm text-soft transition-colors hover:bg-raised hover:text-ink"
                         >
                             <ShoppingBag size={20} aria-hidden="true" />
                             {cart.count > 0 && (
-                                <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] leading-none font-semibold text-canvas tabular">
+                                <span className="tabular absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] leading-none font-semibold text-canvas">
                                     {cart.count}
                                 </span>
                             )}
@@ -167,7 +180,12 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                         aria-label="Mobile"
                         className="border-t border-line bg-canvas px-5 py-5 lg:hidden"
                     >
-                        <form action={PATHS.products} method="get" role="search" className="relative mb-5">
+                        <form
+                            action={productsIndex.url()}
+                            method="get"
+                            role="search"
+                            className="relative mb-5"
+                        >
                             <label htmlFor="mobile-search" className="sr-only">
                                 Search products
                             </label>
@@ -187,21 +205,49 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
 
                         <ul className="flex flex-col gap-1">
                             {[
-                                { href: PATHS.products, label: 'Shop all' },
-                                { href: PATHS.categories, label: 'Departments' },
+                                {
+                                    href: productsIndex.url(),
+                                    label: 'Shop all',
+                                },
+                                {
+                                    href: categoriesIndex.url(),
+                                    label: 'Departments',
+                                },
                                 ...navCategories.map((category) => ({
-                                    href: `${PATHS.products}?category=${category.slug}`,
+                                    href: productsIndex.url({
+                                        query: { category: category.slug },
+                                    }),
                                     label: category.name,
                                 })),
-                                { href: PATHS.cart, label: `Cart (${cart.count})` },
+                                {
+                                    href: cartIndex.url(),
+                                    label: `Cart (${cart.count})`,
+                                },
                                 user
-                                    ? { href: PATHS.orders, label: 'My orders' }
-                                    : { href: PATHS.login, label: 'Sign in' },
+                                    ? {
+                                          href: ordersIndex.url(),
+                                          label: 'My orders',
+                                      }
+                                    : {
+                                          href: loginCreate.url(),
+                                          label: 'Sign in',
+                                      },
                                 user
-                                    ? { href: PATHS.account, label: 'Account' }
-                                    : { href: PATHS.register, label: 'Create an account' },
+                                    ? {
+                                          href: accountIndex.url(),
+                                          label: 'Account',
+                                      }
+                                    : {
+                                          href: registerCreate.url(),
+                                          label: 'Create an account',
+                                      },
                                 ...(user?.is_admin
-                                    ? [{ href: PATHS.admin, label: 'Admin dashboard' }]
+                                    ? [
+                                          {
+                                              href: adminDashboard.url(),
+                                              label: 'Admin dashboard',
+                                          },
+                                      ]
                                     : []),
                             ].map((link) => (
                                 <li key={`${link.href}-${link.label}`}>
@@ -229,18 +275,19 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                 <div className="container-shop grid gap-12 py-14 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] lg:py-16">
                     <div className="max-w-sm">
                         <Link
-                            href={PATHS.home}
+                            href={home.url()}
                             className="font-display text-[30px] leading-none font-semibold tracking-[0.01em] text-ink"
                         >
                             SHOPIT
                         </Link>
                         <p className="mt-4 text-sm leading-relaxed text-soft">
-                            A considered edit of apparel, objects and technology for
-                            everyday life. Chosen for how they live, not how they sell.
+                            A considered edit of apparel, objects and technology
+                            for everyday life. Chosen for how they live, not how
+                            they sell.
                         </p>
                         <p className="mt-5 text-[12px] leading-relaxed text-muted">
-                            Secure card payments and cash on delivery. Complimentary
-                            delivery over{' '}
+                            Secure card payments and cash on delivery.
+                            Complimentary delivery over{' '}
                             {formatCurrency(
                                 shop.shipping.free_threshold,
                                 shop.currency,
@@ -254,22 +301,36 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                         <h2 className="eyebrow">Shop</h2>
                         <ul className="mt-5 space-y-3 text-sm">
                             <li>
-                                <Link href={PATHS.products} className="link-underline text-soft hover:text-ink">
+                                <Link
+                                    href={productsIndex.url()}
+                                    className="link-underline text-soft hover:text-ink"
+                                >
                                     All products
                                 </Link>
                             </li>
                             <li>
-                                <Link href={PATHS.categories} className="link-underline text-soft hover:text-ink">
+                                <Link
+                                    href={categoriesIndex.url()}
+                                    className="link-underline text-soft hover:text-ink"
+                                >
                                     Departments
                                 </Link>
                             </li>
                             <li>
-                                <Link href={`${PATHS.products}?sort=latest`} className="link-underline text-soft hover:text-ink">
+                                <Link
+                                    href={productsIndex.url({
+                                        query: { sort: 'latest' },
+                                    })}
+                                    className="link-underline text-soft hover:text-ink"
+                                >
                                     New this week
                                 </Link>
                             </li>
                             <li>
-                                <Link href={PATHS.cart} className="link-underline text-soft hover:text-ink">
+                                <Link
+                                    href={cartIndex.url()}
+                                    className="link-underline text-soft hover:text-ink"
+                                >
                                     Your cart
                                 </Link>
                             </li>
@@ -282,12 +343,18 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                             {user ? (
                                 <>
                                     <li>
-                                        <Link href={PATHS.account} className="link-underline text-soft hover:text-ink">
+                                        <Link
+                                            href={accountIndex.url()}
+                                            className="link-underline text-soft hover:text-ink"
+                                        >
                                             Your account
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href={PATHS.orders} className="link-underline text-soft hover:text-ink">
+                                        <Link
+                                            href={ordersIndex.url()}
+                                            className="link-underline text-soft hover:text-ink"
+                                        >
                                             My orders
                                         </Link>
                                     </li>
@@ -295,12 +362,18 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                             ) : (
                                 <>
                                     <li>
-                                        <Link href={PATHS.login} className="link-underline text-soft hover:text-ink">
+                                        <Link
+                                            href={loginCreate.url()}
+                                            className="link-underline text-soft hover:text-ink"
+                                        >
                                             Sign in
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href={PATHS.register} className="link-underline text-soft hover:text-ink">
+                                        <Link
+                                            href={registerCreate.url()}
+                                            className="link-underline text-soft hover:text-ink"
+                                        >
                                             Create an account
                                         </Link>
                                     </li>
@@ -308,7 +381,10 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
                             )}
                             {user?.is_admin && (
                                 <li>
-                                    <Link href={PATHS.admin} className="link-underline text-clay hover:text-ink">
+                                    <Link
+                                        href={adminDashboard.url()}
+                                        className="link-underline text-clay hover:text-ink"
+                                    >
                                         Admin dashboard
                                     </Link>
                                 </li>

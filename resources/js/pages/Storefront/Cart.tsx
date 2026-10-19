@@ -1,5 +1,11 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { ArrowRight, Minus, Plus, ShoppingBag, Trash } from '@phosphor-icons/react';
+import {
+    ArrowRight,
+    Minus,
+    Plus,
+    ShoppingBag,
+    Trash,
+} from '@phosphor-icons/react';
 import { useState } from 'react';
 
 import PageMeta from '@/components/common/PageMeta';
@@ -8,7 +14,11 @@ import { Button, ButtonLink } from '@/components/ui/button/Button';
 import EmptyState from '@/components/ui/table/EmptyState';
 import { formatCurrency } from '@/lib/utils';
 import { clear as cartClear } from '@/routes/cart';
-import { destroy as cartDestroy, update as cartUpdate } from '@/routes/cart/items';
+import {
+    destroy as cartDestroy,
+    update as cartUpdate,
+} from '@/routes/cart/items';
+import { index as checkoutIndex } from '@/routes/checkout';
 import { index as productsIndex, show as productShow } from '@/routes/products';
 import type { CartLine, CartSummary, PageProps } from '@/types';
 
@@ -79,7 +89,9 @@ export default function Cart({ cart }: CartProps) {
                             <ButtonLink
                                 href={productsIndex.url()}
                                 size="sm"
-                                endIcon={<ArrowRight size={14} aria-hidden="true" />}
+                                endIcon={
+                                    <ArrowRight size={14} aria-hidden="true" />
+                                }
                             >
                                 Shop the edit
                             </ButtonLink>
@@ -92,7 +104,11 @@ export default function Cart({ cart }: CartProps) {
 
     return (
         <>
-            <PageMeta title="Your cart" description="Review your SHOPIT cart." noIndex />
+            <PageMeta
+                title="Your cart"
+                description="Review your SHOPIT cart."
+                noIndex
+            />
 
             <section className="container-shop py-10 lg:py-14">
                 <div className="flex flex-wrap items-end justify-between gap-4">
@@ -100,7 +116,7 @@ export default function Cart({ cart }: CartProps) {
                         <h1 className="text-[clamp(2.4rem,5vw,4.4rem)] leading-[0.95] font-medium tracking-[-0.03em]">
                             Your cart
                         </h1>
-                        <p className="mt-3 text-[13px] text-muted tabular">
+                        <p className="tabular mt-3 text-[13px] text-muted">
                             {cart.count} {cart.count === 1 ? 'piece' : 'pieces'}
                         </p>
                     </div>
@@ -138,7 +154,7 @@ export default function Cart({ cart }: CartProps) {
                                         >
                                             {line.name}
                                         </Link>
-                                        <p className="mt-1.5 text-[12px] text-muted tabular">
+                                        <p className="tabular mt-1.5 text-[12px] text-muted">
                                             {money(line.unit_amount)} each
                                         </p>
 
@@ -152,13 +168,18 @@ export default function Cart({ cart }: CartProps) {
                                                             line.quantity - 1,
                                                         )
                                                     }
-                                                    disabled={line.quantity <= 1}
+                                                    disabled={
+                                                        line.quantity <= 1
+                                                    }
                                                     aria-label={`Decrease quantity of ${line.name}`}
                                                     className="flex h-full w-9 items-center justify-center text-soft hover:text-ink disabled:opacity-40"
                                                 >
-                                                    <Minus size={12} aria-hidden="true" />
+                                                    <Minus
+                                                        size={12}
+                                                        aria-hidden="true"
+                                                    />
                                                 </button>
-                                                <span className="w-8 text-center text-[12px] font-medium tabular">
+                                                <span className="tabular w-8 text-center text-[12px] font-medium">
                                                     {line.quantity}
                                                 </span>
                                                 <button
@@ -172,12 +193,16 @@ export default function Cart({ cart }: CartProps) {
                                                     disabled={
                                                         line.quantity >=
                                                             line.stock_quantity ||
-                                                        updatingId === line.product_id
+                                                        updatingId ===
+                                                            line.product_id
                                                     }
                                                     aria-label={`Increase quantity of ${line.name}`}
                                                     className="flex h-full w-9 items-center justify-center text-soft hover:text-ink disabled:opacity-40"
                                                 >
-                                                    <Plus size={12} aria-hidden="true" />
+                                                    <Plus
+                                                        size={12}
+                                                        aria-hidden="true"
+                                                    />
                                                 </button>
                                             </div>
 
@@ -186,19 +211,24 @@ export default function Cart({ cart }: CartProps) {
                                                 onClick={() => removeLine(line)}
                                                 className="flex items-center gap-1.5 text-[11px] font-medium text-muted transition-colors hover:text-danger"
                                             >
-                                                <Trash size={13} aria-hidden="true" />
+                                                <Trash
+                                                    size={13}
+                                                    aria-hidden="true"
+                                                />
                                                 Remove
                                             </button>
                                         </div>
 
-                                        {line.quantity >= line.stock_quantity && (
+                                        {line.quantity >=
+                                            line.stock_quantity && (
                                             <p className="mt-2 text-[11px] text-sun">
-                                                Only {line.stock_quantity} available.
+                                                Only {line.stock_quantity}{' '}
+                                                available.
                                             </p>
                                         )}
                                     </div>
 
-                                    <p className="col-start-2 text-right text-[14px] font-medium text-ink tabular sm:col-start-3">
+                                    <p className="tabular col-start-2 text-right text-[14px] font-medium text-ink sm:col-start-3">
                                         {money(line.total_amount)}
                                     </p>
                                 </article>
@@ -208,7 +238,9 @@ export default function Cart({ cart }: CartProps) {
                         <div className="mt-6">
                             {confirmClear ? (
                                 <div className="flex flex-wrap items-center gap-3 text-[12px]">
-                                    <span className="text-soft">Clear the whole cart?</span>
+                                    <span className="text-soft">
+                                        Clear the whole cart?
+                                    </span>
                                     <Button
                                         type="button"
                                         variant="danger"
@@ -246,13 +278,13 @@ export default function Cart({ cart }: CartProps) {
                             <dl className="mt-5 space-y-3 text-[13px]">
                                 <div className="flex items-center justify-between gap-4">
                                     <dt className="text-soft">Subtotal</dt>
-                                    <dd className="text-ink tabular">
+                                    <dd className="tabular text-ink">
                                         {money(cart.subtotal)}
                                     </dd>
                                 </div>
                                 <div className="flex items-center justify-between gap-4">
                                     <dt className="text-soft">Delivery</dt>
-                                    <dd className="text-ink tabular">
+                                    <dd className="tabular text-ink">
                                         {cart.qualifies_for_free_shipping
                                             ? 'Free'
                                             : money(cart.shipping)}
@@ -264,24 +296,27 @@ export default function Cart({ cart }: CartProps) {
                                 <span className="font-display text-[22px] font-medium">
                                     Total
                                 </span>
-                                <span className="text-[16px] font-medium text-ink tabular">
+                                <span className="tabular text-[16px] font-medium text-ink">
                                     {money(cart.grand_total)}
                                 </span>
                             </div>
 
                             {freeShippingRemaining > 0 && (
                                 <p className="mt-4 rounded-sm bg-raised px-3 py-2 text-[11px] leading-relaxed text-soft">
-                                    Add {money(cart.remaining_for_free_shipping)} for
-                                    complimentary delivery.
+                                    Add{' '}
+                                    {money(cart.remaining_for_free_shipping)}{' '}
+                                    for complimentary delivery.
                                 </p>
                             )}
 
                             <ButtonLink
-                                href="/checkout"
+                                href={checkoutIndex.url()}
                                 size="lg"
                                 fullWidth
                                 className="mt-5"
-                                endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                                endIcon={
+                                    <ArrowRight size={15} aria-hidden="true" />
+                                }
                             >
                                 Checkout
                             </ButtonLink>

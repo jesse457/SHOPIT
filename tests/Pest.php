@@ -10,5 +10,4 @@ uses(LazilyRefreshDatabase::class)->in('Feature');
 
 beforeEach(function (): void {
     Cache::flush();
-    $this->withoutVite();
 });

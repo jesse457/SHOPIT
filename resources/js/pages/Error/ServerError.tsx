@@ -2,6 +2,7 @@ import { ArrowRight, ArrowsClockwise } from '@phosphor-icons/react';
 
 import PageMeta from '@/components/common/PageMeta';
 import { Button, ButtonLink } from '@/components/ui/button/Button';
+import { index as productsIndex } from '@/routes/products';
 
 export default function ServerError() {
     return (
@@ -22,21 +23,29 @@ export default function ServerError() {
                     </h1>
                     <div>
                         <p className="max-w-[44ch] text-[15px] leading-relaxed text-soft">
-                            The store hit an unexpected error. Nothing in your cart was
-                            lost. Try the page again, or head back to the collection.
+                            The store hit an unexpected error. Nothing in your
+                            cart was lost. Try the page again, or head back to
+                            the collection.
                         </p>
                         <div className="mt-6 flex flex-wrap gap-3">
                             <Button
                                 type="button"
                                 onClick={() => window.location.reload()}
-                                startIcon={<ArrowsClockwise size={15} aria-hidden="true" />}
+                                startIcon={
+                                    <ArrowsClockwise
+                                        size={15}
+                                        aria-hidden="true"
+                                    />
+                                }
                             >
                                 Try again
                             </Button>
                             <ButtonLink
-                                href="/products"
+                                href={productsIndex.url()}
                                 variant="secondary"
-                                endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                                endIcon={
+                                    <ArrowRight size={15} aria-hidden="true" />
+                                }
                             >
                                 Shop the edit
                             </ButtonLink>

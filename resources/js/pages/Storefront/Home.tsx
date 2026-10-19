@@ -1,10 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import {
-    ArrowRight,
-    CreditCard,
-    Package,
-    Truck,
-} from '@phosphor-icons/react';
+import { ArrowRight, CreditCard, Package, Truck } from '@phosphor-icons/react';
 
 import PageMeta from '@/components/common/PageMeta';
 import Reveal from '@/components/common/Reveal';
@@ -12,7 +7,10 @@ import ProductCard from '@/components/storefront/ProductCard';
 import ProductImage from '@/components/storefront/ProductImage';
 import { ButtonLink } from '@/components/ui/button/Button';
 import { formatCurrency } from '@/lib/utils';
-import { index as categoriesIndex, show as categoryShow } from '@/routes/categories';
+import {
+    index as categoriesIndex,
+    show as categoryShow,
+} from '@/routes/categories';
 import { index as productsIndex } from '@/routes/products';
 import type { Brand, Category, PageProps, Product } from '@/types';
 
@@ -116,14 +114,16 @@ export default function Home({ departments, newArrivals, brands }: HomeProps) {
                         Objects for the way you live.
                     </h1>
                     <p className="mt-6 max-w-[46ch] text-[16px] leading-relaxed text-soft">
-                        A tight edit of apparel, objects and technology. Chosen for
-                        how they live, not how they sell.
+                        A tight edit of apparel, objects and technology. Chosen
+                        for how they live, not how they sell.
                     </p>
                     <div className="mt-8 flex flex-wrap items-center gap-3">
                         <ButtonLink
                             href={productsIndex.url()}
                             size="lg"
-                            endIcon={<ArrowRight size={16} aria-hidden="true" />}
+                            endIcon={
+                                <ArrowRight size={16} aria-hidden="true" />
+                            }
                         >
                             Shop the edit
                         </ButtonLink>
@@ -138,13 +138,15 @@ export default function Home({ departments, newArrivals, brands }: HomeProps) {
                 </div>
 
                 <div className="relative">
-                    <div className="absolute -right-3 -bottom-3 h-full w-full rounded-sm bg-raised" aria-hidden="true" />
+                    <div
+                        className="absolute -right-3 -bottom-3 h-full w-full rounded-sm bg-raised"
+                        aria-hidden="true"
+                    />
                     <div className="relative aspect-[4/5] overflow-hidden rounded-sm border border-line bg-raised">
-                        <img
+                        <ProductImage
                             src={HERO_IMAGE}
                             alt="A warm, considered retail interior with clothes and objects on display"
-                            fetchPriority="high"
-                            className="h-full w-full object-cover"
+                            priority
                         />
                     </div>
                 </div>
@@ -254,7 +256,9 @@ export default function Home({ departments, newArrivals, brands }: HomeProps) {
                                 New this week.
                             </h2>
                             <Link
-                                href={productsIndex.url({ query: { sort: 'latest' } })}
+                                href={productsIndex.url({
+                                    query: { sort: 'latest' },
+                                })}
                                 className="link-underline flex items-center gap-2 text-[13px] font-medium text-soft transition-colors hover:text-ink"
                             >
                                 Shop all products
@@ -263,7 +267,10 @@ export default function Home({ departments, newArrivals, brands }: HomeProps) {
                         </div>
                         <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3 lg:grid-cols-4">
                             {newArrivals.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                />
                             ))}
                         </div>
                     </section>
@@ -303,27 +310,30 @@ export default function Home({ departments, newArrivals, brands }: HomeProps) {
                                 Bought once. Kept for years.
                             </h2>
                             <p className="mt-6 max-w-[52ch] text-[15px] leading-relaxed text-soft">
-                                SHOPIT began as a reaction to the endless feed: a
-                                small store with a clear point of view. We stock what
-                                we would use ourselves, and we stop when the edit is
-                                complete.
+                                SHOPIT began as a reaction to the endless feed:
+                                a small store with a clear point of view. We
+                                stock what we would use ourselves, and we stop
+                                when the edit is complete.
                             </p>
                             <div className="mt-9">
                                 <ButtonLink
                                     href={productsIndex.url()}
                                     variant="secondary"
-                                    endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                                    endIcon={
+                                        <ArrowRight
+                                            size={15}
+                                            aria-hidden="true"
+                                        />
+                                    }
                                 >
                                     Shop all products
                                 </ButtonLink>
                             </div>
                         </div>
                         <div className="order-1 aspect-[5/4] overflow-hidden rounded-sm border border-line bg-raised lg:order-2">
-                            <img
+                            <ProductImage
                                 src={STORY_IMAGE}
                                 alt="Neatly folded clothing in neutral tones"
-                                loading="lazy"
-                                className="h-full w-full object-cover"
                             />
                         </div>
                     </div>
@@ -367,7 +377,9 @@ export default function Home({ departments, newArrivals, brands }: HomeProps) {
                             href={productsIndex.url()}
                             size="lg"
                             className="bg-canvas text-ink hover:bg-clay hover:text-canvas"
-                            endIcon={<ArrowRight size={16} aria-hidden="true" />}
+                            endIcon={
+                                <ArrowRight size={16} aria-hidden="true" />
+                            }
                         >
                             Browse the collection
                         </ButtonLink>

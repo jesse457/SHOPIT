@@ -24,7 +24,10 @@ export default function PageMeta({
             <meta property="og:description" content={description} />
             <meta property="og:type" content="website" />
             {image && <meta property="og:image" content={image} />}
-            <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+            <meta
+                name="twitter:card"
+                content={image ? 'summary_large_image' : 'summary'}
+            />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
             {image && <meta name="twitter:image" content={image} />}

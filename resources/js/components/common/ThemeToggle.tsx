@@ -15,7 +15,7 @@ export default function ThemeToggle({ className }: { className?: string }) {
             aria-label={label}
             title={label}
             className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-sm text-soft transition-colors duration-200 hover:bg-raised hover:text-ink focus-visible:outline-2 focus-visible:outline-clay focus-visible:outline-offset-2',
+                'flex h-10 w-10 items-center justify-center rounded-sm text-soft transition-colors duration-200 hover:bg-raised hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay',
                 className,
             )}
         >

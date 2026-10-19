@@ -8,7 +8,10 @@ interface ApplyOptions {
 }
 
 export function useCatalogFilters(filters: CatalogFilters) {
-    const apply = (patch: Partial<CatalogFilters>, options: ApplyOptions = {}) => {
+    const apply = (
+        patch: Partial<CatalogFilters>,
+        options: ApplyOptions = {},
+    ) => {
         const next = { ...filters, ...patch };
         const query: Record<string, string | number> = {};
 

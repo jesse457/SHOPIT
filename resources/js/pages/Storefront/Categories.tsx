@@ -4,8 +4,8 @@ import { ArrowRight } from '@phosphor-icons/react';
 import PageMeta from '@/components/common/PageMeta';
 import Reveal from '@/components/common/Reveal';
 import ProductImage from '@/components/storefront/ProductImage';
-import EmptyState from '@/components/ui/table/EmptyState';
 import { ButtonLink } from '@/components/ui/button/Button';
+import EmptyState from '@/components/ui/table/EmptyState';
 import { show as categoryShow } from '@/routes/categories';
 import { index as productsIndex } from '@/routes/products';
 import type { Category } from '@/types';
@@ -20,7 +20,11 @@ const FALLBACKS = [
 ];
 
 function categoryImage(category: Category, index: number): string {
-    return category.image_url ?? FALLBACKS[index % FALLBACKS.length] ?? FALLBACKS[0];
+    return (
+        category.image_url ??
+        FALLBACKS[index % FALLBACKS.length] ??
+        FALLBACKS[0]
+    );
 }
 
 export default function Categories({ categories }: { categories: Category[] }) {
@@ -37,8 +41,8 @@ export default function Categories({ categories }: { categories: Category[] }) {
                 </h1>
                 <p className="mt-4 max-w-[54ch] text-[14px] leading-relaxed text-soft">
                     Each department is edited down to the pieces we would use
-                    ourselves. Start where you need something, or browse the whole
-                    collection.
+                    ourselves. Start where you need something, or browse the
+                    whole collection.
                 </p>
                 <div className="mt-6">
                     <ButtonLink
@@ -77,9 +81,10 @@ export default function Categories({ categories }: { categories: Category[] }) {
                                             <p className="font-display text-[30px] leading-none font-medium">
                                                 {category.name}
                                             </p>
-                                            <p className="mt-1.5 text-[11px] text-[#f6f2ea]/70 tabular">
+                                            <p className="tabular mt-1.5 text-[11px] text-[#f6f2ea]/70">
                                                 {category.products_count ?? 0}{' '}
-                                                {(category.products_count ?? 0) === 1
+                                                {(category.products_count ??
+                                                    0) === 1
                                                     ? 'piece'
                                                     : 'pieces'}
                                             </p>

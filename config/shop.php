@@ -42,7 +42,7 @@ return [
     */
 
     'orders' => [
-        'stripe_hold_minutes' => 30,
+        'stripe_hold_minutes' => 45,
     ],
 
     /*

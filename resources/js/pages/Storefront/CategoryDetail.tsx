@@ -9,7 +9,10 @@ import { ButtonLink } from '@/components/ui/button/Button';
 import EmptyState from '@/components/ui/table/EmptyState';
 import Pagination from '@/components/ui/table/Pagination';
 import { home } from '@/routes';
-import { index as categoriesIndex, show as categoryShow } from '@/routes/categories';
+import {
+    index as categoriesIndex,
+    show as categoryShow,
+} from '@/routes/categories';
 import { index as productsIndex } from '@/routes/products';
 import type { Category, Paginated, Product } from '@/types';
 
@@ -21,20 +24,18 @@ interface CategoryDetailProps {
     products: Paginated<Product>;
 }
 
-export default function CategoryDetail({ category, products }: CategoryDetailProps) {
-    const meta = products.meta;
-    const total = meta?.total ?? products.data.length;
+export default function CategoryDetail({
+    category,
+    products,
+}: CategoryDetailProps) {
+    const total = products.total ?? products.data.length;
 
     const goToPage = (page: number) => {
-        router.get(
-            categoryShow.url(category.slug),
-            page > 1 ? { page } : {},
-            {
-                preserveState: true,
-                preserveScroll: true,
-                only: ['products'],
-            },
-        );
+        router.get(categoryShow.url(category.slug), page > 1 ? { page } : {}, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['products'],
+        });
     };
 
     return (
@@ -46,12 +47,18 @@ export default function CategoryDetail({ category, products }: CategoryDetailPro
             />
 
             <div className="container-shop pt-6">
-                <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[11px] text-muted">
+                <nav
+                    aria-label="Breadcrumb"
+                    className="flex items-center gap-1.5 text-[11px] text-muted"
+                >
                     <Link href={home.url()} className="hover:text-ink">
                         Home
                     </Link>
                     <span aria-hidden="true">/</span>
-                    <Link href={categoriesIndex.url()} className="hover:text-ink">
+                    <Link
+                        href={categoriesIndex.url()}
+                        className="hover:text-ink"
+                    >
                         Departments
                     </Link>
                     <span aria-hidden="true">/</span>
@@ -65,8 +72,8 @@ export default function CategoryDetail({ category, products }: CategoryDetailPro
                         {category.name}
                     </h1>
                     <p className="mt-4 max-w-[50ch] text-[14px] leading-relaxed text-soft">
-                        The {category.name.toLowerCase()} department, edited down to
-                        the pieces worth keeping. {total}{' '}
+                        The {category.name.toLowerCase()} department, edited
+                        down to the pieces worth keeping. {total}{' '}
                         {total === 1 ? 'piece' : 'pieces'} in the current edit.
                     </p>
                     <div className="mt-6 flex flex-wrap gap-3">
@@ -74,7 +81,12 @@ export default function CategoryDetail({ category, products }: CategoryDetailPro
                             href={`${productsIndex.url()}?category=${category.slug}`}
                             variant="secondary"
                             size="sm"
-                            startIcon={<SlidersHorizontal size={14} aria-hidden="true" />}
+                            startIcon={
+                                <SlidersHorizontal
+                                    size={14}
+                                    aria-hidden="true"
+                                />
+                            }
                         >
                             Filter and sort
                         </ButtonLink>
@@ -103,17 +115,20 @@ export default function CategoryDetail({ category, products }: CategoryDetailPro
                         <Reveal>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3 lg:grid-cols-4">
                                 {products.data.map((product) => (
-                                    <ProductCard key={product.id} product={product} />
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                    />
                                 ))}
                             </div>
                         </Reveal>
 
                         <Pagination
-                            currentPage={meta?.current_page ?? 1}
-                            lastPage={meta?.last_page ?? 1}
+                            currentPage={products.current_page ?? 1}
+                            lastPage={products.last_page ?? 1}
                             total={total}
-                            from={meta?.from ?? null}
-                            to={meta?.to ?? null}
+                            from={products.from ?? null}
+                            to={products.to ?? null}
                             onPageChange={goToPage}
                         />
                     </>

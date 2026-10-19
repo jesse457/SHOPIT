@@ -29,7 +29,8 @@ export function formatCurrency(
     currency = 'XAF',
     locale = 'fr-CM',
 ): string {
-    const amount = typeof value === 'string' ? Number.parseFloat(value) : (value ?? 0);
+    const amount =
+        typeof value === 'string' ? Number.parseFloat(value) : (value ?? 0);
 
     if (!Number.isFinite(amount)) {
         return '';
@@ -45,8 +46,11 @@ export function formatCurrency(
     }).format(amount);
 }
 
-export function formatNumber(value: number | string | null | undefined): string {
-    const amount = typeof value === 'string' ? Number.parseFloat(value) : (value ?? 0);
+export function formatNumber(
+    value: number | string | null | undefined,
+): string {
+    const amount =
+        typeof value === 'string' ? Number.parseFloat(value) : (value ?? 0);
 
     if (!Number.isFinite(amount)) {
         return '0';
@@ -79,7 +83,8 @@ export function titleCase(value: string): string {
         .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export type Tone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'clay';
+export type Tone =
+    'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'clay';
 
 const ORDER_STATUS_TONES: Record<string, Tone> = {
     new: 'info',

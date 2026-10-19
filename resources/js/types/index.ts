@@ -33,14 +33,12 @@ export interface ShopConfig {
 
 export interface Paginated<T> {
     data: T[];
-    meta?: {
-        current_page: number;
-        from: number | null;
-        last_page: number;
-        per_page: number;
-        to: number | null;
-        total: number;
-    };
+    current_page: number;
+    from: number | null;
+    last_page: number;
+    per_page: number;
+    to: number | null;
+    total: number;
 }
 
 export type CatalogSort = 'latest' | 'price_asc' | 'price_desc' | 'name_asc';
@@ -152,6 +150,7 @@ export interface Order {
     status_label: string;
     payment_status: string;
     payment_status_label: string;
+    can_retry_payment: boolean;
     payment_method: string;
     payment_method_label: string;
     grand_total: string;
@@ -166,10 +165,61 @@ export interface Order {
         id: number;
         name: string;
         email: string;
-    };
+    } | null;
+}
+
+export interface AdminProduct extends Omit<Product, 'images'> {
+    images: string[];
+    images_url: string[];
+    category_id: number;
+    brand_id: number;
+    order_items_count?: number;
+    updated_at: string;
+}
+
+export interface AdminOrderSummary {
+    id: number;
+    number: string;
+    status: string;
+    status_label: string;
+    payment_status: string;
+    payment_status_label: string;
+    payment_method: string;
+    payment_method_label: string;
+    grand_total: string;
+    shipping_amount: string;
+    currency: string;
+    created_at: string;
+    paid_at: string | null;
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+        is_admin: boolean;
+    } | null;
+}
+
+export interface AdminOrder extends AdminOrderSummary {
+    notes: string | null;
+    expires_at: string | null;
+    stock_released_at: string | null;
+    can_retry_payment: boolean;
+    items: OrderItem[];
+    address: (Address & { full_name: string }) | null;
+}
+
+export interface AdminCustomer {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+    email_verified_at: string | null;
+    orders_count?: number;
+    created_at: string;
 }
 
 export interface ToastMessage {
+    id?: string;
     type: ToastType;
     message: string;
 }

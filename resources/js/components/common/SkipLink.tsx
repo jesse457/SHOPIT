@@ -1,4 +1,8 @@
-export default function SkipLink({ targetId = 'main-content' }: { targetId?: string }) {
+export default function SkipLink({
+    targetId = 'main-content',
+}: {
+    targetId?: string;
+}) {
     return (
         <a
             href={`#${targetId}`}
