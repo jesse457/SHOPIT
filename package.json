@@ -1,20 +1,52 @@
 {
+    "$schema": "https://www.schemastore.org/package.json",
     "private": true,
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "types:check": "php artisan wayfinder:generate --with-form --no-interaction && tsc --noEmit",
+        "lint": "eslint . --fix",
+        "lint:check": "eslint .",
+        "format": "prettier --write resources/",
+        "format:check": "prettier --check resources/"
     },
     "devDependencies": {
-        "autoprefixer": "^10.4.19",
-        "axios": "^1.6.4",
-        "laravel-vite-plugin": "^1.0",
-        "postcss": "^8.4.38",
-        "tailwindcss": "^3.4.3",
-        "vite": "^5.0"
+        "@eslint/js": "^9.19.0",
+        "@laravel/vite-plugin-wayfinder": "^0.1.11",
+        "@stylistic/eslint-plugin": "^5.10.0",
+        "@types/node": "^22.13.5",
+        "eslint": "^9.17.0",
+        "eslint-config-prettier": "^10.0.1",
+        "eslint-import-resolver-typescript": "^4.4.4",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-react": "^7.37.3",
+        "eslint-plugin-react-hooks": "^7.0.0",
+        "prettier": "^3.4.2",
+        "prettier-plugin-tailwindcss": "^0.6.11",
+        "typescript-eslint": "^8.23.0"
     },
     "dependencies": {
-        "poppins": "^0.1.1",
-        "preline": "^2.1.0"
+        "@inertiajs/react": "^3.0.0",
+        "@inertiajs/vite": "^3.0.0",
+        "@phosphor-icons/react": "^2.1.10",
+        "@tailwindcss/vite": "^4.1.11",
+        "@types/react": "^19.2.0",
+        "@types/react-dom": "^19.2.0",
+        "@vitejs/plugin-react": "^5.2.0",
+        "clsx": "^2.1.1",
+        "globals": "^15.14.0",
+        "laravel-vite-plugin": "^3.1",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "tailwind-merge": "^3.0.1",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.7.2",
+        "vite": "^8.0.0"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
+        "lightningcss-linux-x64-gnu": "^1.29.1"
     }
 }

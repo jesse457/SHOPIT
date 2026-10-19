@@ -1,0 +1,299 @@
+export type Theme = 'light' | 'dark';
+
+export type ToastType = 'success' | 'info' | 'error';
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+}
+
+export interface NavCategory {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+export interface ShopConfig {
+    currency: string;
+    currency_locale: string;
+    shipping: {
+        free_threshold: number;
+        flat_rate: number;
+    };
+    orders: {
+        stripe_hold_minutes: number;
+    };
+    products: {
+        page_size: number;
+        low_stock_threshold: number;
+    };
+}
+
+export interface Paginated<T> {
+    data: T[];
+    current_page: number;
+    from: number | null;
+    last_page: number;
+    per_page: number;
+    to: number | null;
+    total: number;
+}
+
+export type CatalogSort = 'latest' | 'price_asc' | 'price_desc' | 'name_asc';
+
+export interface CatalogFilters {
+    q: string;
+    categories: string[];
+    brands: string[];
+    featured: boolean;
+    on_sale: boolean;
+    min_price: number | null;
+    max_price: number | null;
+    sort: CatalogSort;
+}
+
+export interface PriceBounds {
+    min: number;
+    max: number;
+}
+
+export interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    image: string | null;
+    image_url: string | null;
+    is_active: boolean;
+    products_count?: number;
+}
+
+export interface Brand {
+    id: number;
+    name: string;
+    slug: string;
+    image: string | null;
+    image_url: string | null;
+    is_active: boolean;
+    products_count?: number;
+}
+
+export interface Product {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    price: string;
+    compare_at_price: string | null;
+    images: string[];
+    image_url: string | null;
+    category: Pick<Category, 'id' | 'name' | 'slug'> | null;
+    brand: Pick<Brand, 'id' | 'name' | 'slug'> | null;
+    is_active: boolean;
+    is_featured: boolean;
+    in_stock: boolean;
+    on_sale: boolean;
+    stock_quantity: number;
+    low_stock_threshold: number;
+    is_low_stock: boolean;
+    rating_average?: number | null;
+    reviews_count?: number;
+    created_at: string;
+}
+
+export interface CartLine {
+    product_id: number;
+    name: string;
+    slug: string;
+    image_url: string | null;
+    quantity: number;
+    unit_amount: string;
+    total_amount: string;
+    stock_quantity: number;
+}
+
+export interface CartSummary {
+    items: CartLine[];
+    count: number;
+    subtotal: string;
+    discount: string;
+    coupon: {
+        id: number;
+        code: string;
+        type: string;
+        value: string;
+        label: string;
+    } | null;
+    shipping: string;
+    grand_total: string;
+    free_shipping_threshold: string;
+    remaining_for_free_shipping: string;
+    qualifies_for_free_shipping: boolean;
+}
+
+export interface Address {
+    first_name: string;
+    last_name: string;
+    phone: string;
+    street_address: string;
+    city: string;
+    state: string;
+    zip_code: string;
+}
+
+export interface OrderItem {
+    id: number;
+    product_id: number | null;
+    product_name: string;
+    product_image_url: string | null;
+    quantity: number;
+    unit_amount: string;
+    total_amount: string;
+    product_slug: string | null;
+}
+
+export interface Order {
+    id: number;
+    number: string;
+    status: string;
+    status_label: string;
+    payment_status: string;
+    payment_status_label: string;
+    can_retry_payment: boolean;
+    payment_method: string;
+    payment_method_label: string;
+    grand_total: string;
+    shipping_amount: string;
+    discount_amount: string;
+    coupon_code: string | null;
+    currency: string;
+    notes: string | null;
+    created_at: string;
+    paid_at: string | null;
+    items: OrderItem[];
+    address: (Address & { full_name: string }) | null;
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+    } | null;
+}
+
+export interface AdminProduct extends Omit<Product, 'images'> {
+    images: string[];
+    images_url: string[];
+    category_id: number;
+    brand_id: number;
+    order_items_count?: number;
+    updated_at: string;
+}
+
+export interface AdminOrderSummary {
+    id: number;
+    number: string;
+    status: string;
+    status_label: string;
+    payment_status: string;
+    payment_status_label: string;
+    payment_method: string;
+    payment_method_label: string;
+    grand_total: string;
+    shipping_amount: string;
+    discount_amount: string;
+    coupon_code: string | null;
+    currency: string;
+    created_at: string;
+    paid_at: string | null;
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+        is_admin: boolean;
+    } | null;
+}
+
+export interface AdminOrder extends AdminOrderSummary {
+    notes: string | null;
+    expires_at: string | null;
+    stock_released_at: string | null;
+    can_retry_payment: boolean;
+    items: OrderItem[];
+    address: (Address & { full_name: string }) | null;
+}
+
+export interface Review {
+    id: number;
+    rating: number;
+    title: string | null;
+    body: string | null;
+    is_approved: boolean;
+    user_name?: string;
+    created_at: string;
+}
+
+export interface AdminReview {
+    id: number;
+    rating: number;
+    title: string | null;
+    body: string | null;
+    is_approved: boolean;
+    created_at: string;
+    product: { id: number; name: string; slug: string } | null;
+    user: { id: number; name: string; email: string } | null;
+}
+
+export interface AdminCoupon {
+    id: number;
+    code: string;
+    type: 'percentage' | 'fixed';
+    type_label: string;
+    value: string;
+    min_order_amount: string | null;
+    max_uses: number | null;
+    used_count: number;
+    starts_at: string | null;
+    expires_at: string | null;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface AdminCustomer {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+    email_verified_at: string | null;
+    orders_count?: number;
+    created_at: string;
+}
+
+export interface ToastMessage {
+    id?: string;
+    type: ToastType;
+    message: string;
+}
+
+export interface FlashProps {
+    success: string | null;
+    error: string | null;
+}
+
+export interface PageProps {
+    name: string;
+    shop: ShopConfig;
+    auth: {
+        user: User | null;
+    };
+    cart: {
+        count: number;
+    };
+    wishlist: {
+        count: number;
+    };
+    navCategories: NavCategory[];
+    toast: ToastMessage | null;
+    status: string | null;
+    flash: FlashProps;
+    [key: string]: unknown;
+}
