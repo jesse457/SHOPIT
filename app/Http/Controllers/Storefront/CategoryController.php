@@ -34,6 +34,7 @@ class CategoryController extends Controller
 
         $products = Product::query()
             ->active()
+            ->withRating()
             ->whereBelongsTo($category)
             ->with(['category:id,name,slug', 'brand:id,name,slug'])
             ->latest()

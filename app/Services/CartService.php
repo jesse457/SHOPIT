@@ -9,6 +9,8 @@ class CartService
 {
     private const SESSION_KEY = 'cart';
 
+    public function __construct(private CouponService $coupons) {}
+
     /**
      * @return array<int, int>
      */
@@ -98,12 +100,24 @@ class CartService
             ? 0.0
             : (float) config('shop.shipping.flat_rate');
 
+        $coupon = $this->coupons->current($subtotal);
+        $discount = $coupon?->discountFor($subtotal) ?? 0.0;
+        $grandTotal = max(0.0, $subtotal + $shipping - $discount);
+
         return [
             'items' => $items,
             'count' => array_sum(array_column($items, 'quantity')),
             'subtotal' => number_format($subtotal, 2, '.', ''),
+            'discount' => number_format($discount, 2, '.', ''),
+            'coupon' => $coupon === null ? null : [
+                'id' => $coupon->id,
+                'code' => $coupon->code,
+                'type' => $coupon->type->value,
+                'value' => (string) $coupon->value,
+                'label' => $coupon->type->label(),
+            ],
             'shipping' => number_format($shipping, 2, '.', ''),
-            'grand_total' => number_format($subtotal + $shipping, 2, '.', ''),
+            'grand_total' => number_format($grandTotal, 2, '.', ''),
             'free_shipping_threshold' => number_format($threshold, 2, '.', ''),
             'remaining_for_free_shipping' => number_format(max(0, $threshold - $subtotal), 2, '.', ''),
             'qualifies_for_free_shipping' => $subtotal >= $threshold,
@@ -149,6 +163,7 @@ class CartService
     public function clear(): void
     {
         session()->forget(self::SESSION_KEY);
+        $this->coupons->remove();
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderUpdateRequest;
 use App\Http\Resources\Admin\OrderResource;
 use App\Models\Order;
+use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -104,6 +106,7 @@ class OrderController extends Controller
     public function update(OrderUpdateRequest $request, Order $order): RedirectResponse
     {
         $validated = $request->validated();
+        $previousStatus = $order->status;
         $newStatus = OrderStatus::from($validated['status']);
         $newPaymentStatus = PaymentStatus::from($validated['payment_status']);
 
@@ -133,6 +136,16 @@ class OrderController extends Controller
             'notes' => $validated['notes'] ?? null,
             'paid_at' => $paidAt,
         ])->save();
+
+        if ($previousStatus !== $newStatus) {
+            try {
+                $order->user?->notify(
+                    new OrderStatusChangedNotification($order->fresh()),
+                );
+            } catch (Throwable $error) {
+                report($error);
+            }
+        }
 
         return back()->withToast('Order updated.');
     }

@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     ArrowUpRight,
+    Heart,
     List,
     MagnifyingGlass,
     ShoppingBag,
@@ -23,6 +24,7 @@ import { index as cartIndex } from '@/routes/cart';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as ordersIndex } from '@/routes/orders';
 import { index as productsIndex } from '@/routes/products';
+import { index as wishlistIndex } from '@/routes/wishlist';
 import type { PageProps } from '@/types';
 
 export default function StorefrontLayout({
@@ -30,7 +32,8 @@ export default function StorefrontLayout({
 }: {
     children: ReactNode;
 }) {
-    const { auth, cart, navCategories, shop } = usePage<PageProps>().props;
+    const { auth, cart, wishlist, navCategories, shop } =
+        usePage<PageProps>().props;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const year = new Date().getFullYear();
     const user = auth.user;
@@ -148,6 +151,22 @@ export default function StorefrontLayout({
                             <User size={20} aria-hidden="true" />
                         </Link>
 
+                        {user && (
+                            <Link
+                                href={wishlistIndex.url()}
+                                aria-label={`Wishlist with ${wishlist.count} item${wishlist.count === 1 ? '' : 's'}`}
+                                title="Wishlist"
+                                className="relative flex h-10 w-10 items-center justify-center rounded-sm text-soft transition-colors hover:bg-raised hover:text-ink"
+                            >
+                                <Heart size={20} aria-hidden="true" />
+                                {wishlist.count > 0 && (
+                                    <span className="tabular absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] leading-none font-semibold text-canvas">
+                                        {wishlist.count}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
+
                         {user?.is_admin && (
                             <Link
                                 href={adminDashboard.url()}
@@ -232,15 +251,23 @@ export default function StorefrontLayout({
                                           href: loginCreate.url(),
                                           label: 'Sign in',
                                       },
-                                user
-                                    ? {
-                                          href: accountIndex.url(),
-                                          label: 'Account',
-                                      }
-                                    : {
-                                          href: registerCreate.url(),
-                                          label: 'Create an account',
-                                      },
+                                ...(user
+                                    ? [
+                                          {
+                                              href: wishlistIndex.url(),
+                                              label: `Wishlist (${wishlist.count})`,
+                                          },
+                                          {
+                                              href: accountIndex.url(),
+                                              label: 'Account',
+                                          },
+                                      ]
+                                    : [
+                                          {
+                                              href: registerCreate.url(),
+                                              label: 'Create an account',
+                                          },
+                                      ]),
                                 ...(user?.is_admin
                                     ? [
                                           {
@@ -356,6 +383,14 @@ export default function StorefrontLayout({
                                             className="link-underline text-soft hover:text-ink"
                                         >
                                             My orders
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href={wishlistIndex.url()}
+                                            className="link-underline text-soft hover:text-ink"
+                                        >
+                                            Wishlist ({wishlist.count})
                                         </Link>
                                     </li>
                                 </>

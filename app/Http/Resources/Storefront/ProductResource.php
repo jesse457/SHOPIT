@@ -44,6 +44,10 @@ class ProductResource extends JsonResource
             'stock_quantity' => $this->stock_quantity,
             'low_stock_threshold' => $this->low_stock_threshold,
             'is_low_stock' => $this->isLowStock(),
+            'rating_average' => $this->approved_reviews_avg !== null
+                ? round((float) $this->approved_reviews_avg, 1)
+                : null,
+            'reviews_count' => (int) ($this->approved_reviews_count ?? 0),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

@@ -92,6 +92,21 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
     #[Scope]
     protected function active(Builder $query): Builder
     {
@@ -114,6 +129,18 @@ class Product extends Model
     protected function inStock(Builder $query): Builder
     {
         return $query->where('stock_quantity', '>', 0);
+    }
+
+    #[Scope]
+    protected function withRating(Builder $query): Builder
+    {
+        return $query
+            ->withCount([
+                'reviews as approved_reviews_count' => fn (Builder $query) => $query->where('is_approved', true),
+            ])
+            ->withAvg([
+                'reviews as approved_reviews_avg' => fn (Builder $query) => $query->where('is_approved', true),
+            ], 'rating');
     }
 
     #[Scope]

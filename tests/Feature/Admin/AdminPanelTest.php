@@ -3,10 +3,13 @@
 use App\Enums\OrderStatus;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -190,6 +193,8 @@ test('categories cannot be deleted while products use them', function () {
 });
 
 test('cancelling an order through the admin releases its stock', function () {
+    Notification::fake();
+
     $customer = User::factory()->create();
     $product = Product::factory()->create(['stock_quantity' => 8]);
     $order = Order::factory()->stripePending()->for($customer)->create([
@@ -219,6 +224,11 @@ test('cancelling an order through the admin releases its stock', function () {
     expect($order->status)->toBe(OrderStatus::Cancelled)
         ->and($order->stock_released_at)->not->toBeNull()
         ->and($product->fresh()->stock_quantity)->toBe(10);
+
+    Notification::assertSentTo(
+        $customer,
+        OrderStatusChangedNotification::class,
+    );
 });
 
 test('an invalid order status transition is rejected', function () {
@@ -251,6 +261,26 @@ test('an admin cannot remove their own admin access', function () {
         ->assertSessionHasErrors('is_admin');
 
     expect($this->admin->fresh()->is_admin)->toBeTrue();
+});
+
+test('an admin can create a coupon', function () {
+    $this->actingAs($this->admin)
+        ->post('/admin/coupons', [
+            'code' => 'save20',
+            'type' => 'percentage',
+            'value' => 20,
+            'min_order_amount' => null,
+            'max_uses' => null,
+            'starts_at' => null,
+            'expires_at' => null,
+            'is_active' => true,
+        ])
+        ->assertRedirect('/admin/coupons');
+
+    $coupon = Coupon::query()->where('code', 'SAVE20')->first();
+
+    expect($coupon)->not->toBeNull()
+        ->and((float) $coupon->value)->toBe(20.0);
 });
 
 test('an admin can create a customer account', function () {

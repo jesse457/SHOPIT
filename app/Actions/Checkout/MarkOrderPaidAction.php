@@ -5,8 +5,10 @@ namespace App\Actions\Checkout;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
+use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class MarkOrderPaidAction
 {
@@ -15,7 +17,9 @@ class MarkOrderPaidAction
      */
     public function execute(Order $order, ?string $sessionId = null): void
     {
-        DB::transaction(function () use ($order, $sessionId): void {
+        $transitioned = false;
+
+        DB::transaction(function () use ($order, $sessionId, &$transitioned): void {
             $locked = Order::query()
                 ->lockForUpdate()
                 ->findOrFail($order->getKey());
@@ -42,6 +46,18 @@ class MarkOrderPaidAction
                     ? OrderStatus::Processing
                     : $locked->status,
             ])->save();
+
+            $transitioned = true;
         });
+
+        if ($transitioned) {
+            try {
+                $order->user?->notify(
+                    new OrderStatusChangedNotification($order->fresh()),
+                );
+            } catch (Throwable $error) {
+                report($error);
+            }
+        }
     }
 }

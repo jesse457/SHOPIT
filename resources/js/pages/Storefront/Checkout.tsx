@@ -413,6 +413,19 @@ export default function Checkout({
                                                 : money(cart.shipping)}
                                         </dd>
                                     </div>
+                                    {Number.parseFloat(cart.discount) > 0 && (
+                                        <div className="flex items-center justify-between gap-4">
+                                            <dt className="text-soft">
+                                                Discount
+                                                {cart.coupon
+                                                    ? ` (${cart.coupon.code})`
+                                                    : ''}
+                                            </dt>
+                                            <dd className="tabular text-success">
+                                                - {money(cart.discount)}
+                                            </dd>
+                                        </div>
+                                    )}
                                 </dl>
 
                                 <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-line pt-4">

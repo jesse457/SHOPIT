@@ -21,6 +21,7 @@ class HomeController extends Controller
 
         $newArrivals = Product::query()
             ->active()
+            ->withRating()
             ->with($relations)
             ->latest()
             ->limit(8)

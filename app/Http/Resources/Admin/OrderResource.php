@@ -28,6 +28,8 @@ class OrderResource extends JsonResource
             'payment_method_label' => $this->payment_method->label(),
             'grand_total' => (string) $this->grand_total,
             'shipping_amount' => (string) $this->shipping_amount,
+            'discount_amount' => (string) $this->discount_amount,
+            'coupon_code' => $this->coupon_code,
             'currency' => $this->currency,
             'notes' => $this->notes,
             'created_at' => $this->created_at?->toIso8601String(),

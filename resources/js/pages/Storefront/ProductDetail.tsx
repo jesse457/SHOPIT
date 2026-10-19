@@ -1,38 +1,62 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import {
     CaretLeft,
     CaretRight,
     CreditCard,
+    Heart,
     Minus,
     Plus,
+    Star,
     Truck,
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 
+import { create as loginCreate } from '@/actions/App/Http/Controllers/Auth/LoginController';
 import PageMeta from '@/components/common/PageMeta';
 import ProductCard from '@/components/storefront/ProductCard';
 import ProductImage from '@/components/storefront/ProductImage';
+import RatingStars from '@/components/storefront/RatingStars';
+import ReviewForm from '@/components/storefront/ReviewForm';
+import Alert from '@/components/ui/alert/Alert';
 import Badge from '@/components/ui/badge/Badge';
-import { Button } from '@/components/ui/button/Button';
-import { formatCurrency } from '@/lib/utils';
+import { Button, ButtonLink } from '@/components/ui/button/Button';
+import EmptyState from '@/components/ui/table/EmptyState';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { home } from '@/routes';
 import { store as cartStore } from '@/routes/cart/items';
 import { show as categoryShow } from '@/routes/categories';
 import { index as productsIndex } from '@/routes/products';
-import type { PageProps, Product } from '@/types';
+import {
+    destroy as wishlistDestroy,
+    store as wishlistStore,
+} from '@/routes/wishlist';
+import type { PageProps, Product, Review } from '@/types';
 
 interface ProductDetailProps {
     product: Product;
     related: Product[];
+    reviews: Review[];
+    ratingBreakdown: Array<{ rating: number; count: number }>;
+    canReview: boolean;
+    myReview: Review | null;
+    isWishlisted: boolean;
 }
 
 export default function ProductDetail(props: ProductDetailProps) {
     return <ProductDetailContent key={props.product.id} {...props} />;
 }
 
-function ProductDetailContent({ product, related }: ProductDetailProps) {
-    const { shop } = usePage<PageProps>().props;
+function ProductDetailContent({
+    product,
+    related,
+    reviews,
+    ratingBreakdown,
+    canReview,
+    myReview,
+    isWishlisted,
+}: ProductDetailProps) {
+    const { shop, auth } = usePage<PageProps>().props;
     const firstImage = product.images[0] ?? null;
     const [activeImage, setActiveImage] = useState<string | null>(firstImage);
     const { data, setData, post, processing, errors } = useForm({
@@ -58,6 +82,25 @@ function ProductDetailContent({ product, related }: ProductDetailProps) {
     const increase = () => {
         setData('quantity', Math.min(maxQuantity, data.quantity + 1));
     };
+
+    const toggleWishlist = () => {
+        if (isWishlisted) {
+            router.delete(wishlistDestroy.url(product.slug), {
+                preserveScroll: true,
+            });
+
+            return;
+        }
+
+        router.post(
+            wishlistStore.url(product.slug),
+            {},
+            { preserveScroll: true },
+        );
+    };
+
+    const reviewCount = product.reviews_count ?? 0;
+    const averageRating = product.rating_average ?? 0;
 
     return (
         <>
@@ -243,6 +286,41 @@ function ProductDetailContent({ product, related }: ProductDetailProps) {
                         </form>
                     )}
 
+                    <div className="mt-3">
+                        {auth.user ? (
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                onClick={toggleWishlist}
+                                startIcon={
+                                    <Heart
+                                        size={14}
+                                        weight={
+                                            isWishlisted ? 'fill' : 'regular'
+                                        }
+                                        aria-hidden="true"
+                                    />
+                                }
+                            >
+                                {isWishlisted
+                                    ? 'Saved to wishlist'
+                                    : 'Save for later'}
+                            </Button>
+                        ) : (
+                            <ButtonLink
+                                href={loginCreate.url()}
+                                variant="ghost"
+                                size="sm"
+                                startIcon={
+                                    <Heart size={14} aria-hidden="true" />
+                                }
+                            >
+                                Sign in to save
+                            </ButtonLink>
+                        )}
+                    </div>
+
                     <div className="mt-7 space-y-3 border-t border-line pt-5 text-[12px] text-soft">
                         <p className="flex items-start gap-2.5">
                             <Truck
@@ -328,6 +406,119 @@ function ProductDetailContent({ product, related }: ProductDetailProps) {
                                     : ' This piece is currently sold out.'}
                             </p>
                         </details>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                id="reviews"
+                className="container-shop border-t border-line py-16 lg:py-20"
+            >
+                <div className="grid gap-10 lg:grid-cols-[300px_1fr] lg:gap-16">
+                    <div>
+                        <h2 className="text-[clamp(2rem,3.5vw,3rem)] leading-[0.98] font-medium">
+                            Reviews
+                        </h2>
+
+                        <div className="mt-4 flex flex-wrap items-center gap-2">
+                            <RatingStars rating={averageRating} size={16} />
+                            <span className="tabular text-[12px] text-soft">
+                                {averageRating.toFixed(1)} / 5
+                            </span>
+                            <span className="text-[11px] text-muted">
+                                {reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'}
+                            </span>
+                        </div>
+
+                        <div className="mt-5 space-y-1.5">
+                            {ratingBreakdown.map((row) => (
+                                <div
+                                    key={row.rating}
+                                    className="flex items-center gap-2 text-[11px]"
+                                >
+                                    <span className="tabular w-3 text-soft">
+                                        {row.rating}
+                                    </span>
+                                    <Star
+                                        size={11}
+                                        weight="fill"
+                                        className="text-sun"
+                                        aria-hidden="true"
+                                    />
+                                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-raised">
+                                        <div
+                                            className="h-full rounded-full bg-sun"
+                                            style={{
+                                                width: `${(row.count / Math.max(1, reviewCount)) * 100}%`,
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="tabular w-5 text-right text-muted">
+                                        {row.count}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {myReview && (
+                            <Alert
+                                variant={
+                                    myReview.is_approved ? 'success' : 'info'
+                                }
+                                className="mt-6"
+                            >
+                                {myReview.is_approved
+                                    ? 'Your review is published.'
+                                    : 'Your review is awaiting moderation.'}
+                            </Alert>
+                        )}
+
+                        {canReview && <ReviewForm product={product} />}
+
+                        {!canReview && !myReview && (
+                            <p className="mt-6 text-[11px] leading-relaxed text-muted">
+                                Reviews are open to customers who received this
+                                piece.
+                            </p>
+                        )}
+                    </div>
+
+                    <div>
+                        {reviews.length > 0 ? (
+                            <ul className="divide-y divide-line border-t border-line">
+                                {reviews.map((review) => (
+                                    <li key={review.id} className="py-5">
+                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                            <RatingStars
+                                                rating={review.rating}
+                                            />
+                                            <span className="text-[11px] text-muted">
+                                                {review.user_name ??
+                                                    'SHOPIT customer'}{' '}
+                                                {'\u00b7'}{' '}
+                                                {formatDate(review.created_at)}
+                                            </span>
+                                        </div>
+                                        {review.title && (
+                                            <h3 className="mt-2 font-sans text-[14px] font-medium text-ink">
+                                                {review.title}
+                                            </h3>
+                                        )}
+                                        {review.body && (
+                                            <p className="mt-1.5 max-w-[60ch] text-[13px] leading-relaxed text-soft">
+                                                {review.body}
+                                            </p>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <EmptyState
+                                title="No reviews yet"
+                                description="When customers receive this piece, their reviews will appear here."
+                            />
+                        )}
                     </div>
                 </div>
             </section>

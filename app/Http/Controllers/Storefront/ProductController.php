@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Storefront\BrandResource;
 use App\Http\Resources\Storefront\CategoryResource;
 use App\Http\Resources\Storefront\ProductResource;
+use App\Http\Resources\Storefront\ReviewResource;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -46,6 +48,7 @@ class ProductController extends Controller
 
         $query = Product::query()
             ->active()
+            ->withRating()
             ->with(['category:id,name,slug', 'brand:id,name,slug'])
             ->search($search)
             ->when($categorySlugs !== [], fn (Builder $query) => $query->whereHas(
@@ -114,16 +117,23 @@ class ProductController extends Controller
         ]);
     }
 
-    public function show(Product $product): Response
+    public function show(Request $request, Product $product): Response
     {
         abort_unless($product->is_active, 404);
 
-        $product->load(['category:id,name,slug', 'brand:id,name,slug']);
+        $product->load(['category:id,name,slug', 'brand:id,name,slug'])
+            ->loadCount([
+                'reviews as approved_reviews_count' => fn (Builder $query) => $query->where('is_approved', true),
+            ])
+            ->loadAvg([
+                'reviews as approved_reviews_avg' => fn (Builder $query) => $query->where('is_approved', true),
+            ], 'rating');
 
         $related = $product->category_id === null
             ? collect()
             : Product::query()
                 ->active()
+                ->withRating()
                 ->where('category_id', $product->category_id)
                 ->whereKeyNot($product->getKey())
                 ->with(['category:id,name,slug', 'brand:id,name,slug'])
@@ -131,9 +141,50 @@ class ProductController extends Controller
                 ->limit(4)
                 ->get();
 
+        $approvedReviews = $product->approvedReviews()
+            ->with('user:id,name')
+            ->latest()
+            ->limit(20)
+            ->get();
+
+        $ratingCounts = $product->approvedReviews()
+            ->selectRaw('rating, count(*) as aggregate')
+            ->groupBy('rating')
+            ->pluck('aggregate', 'rating');
+
+        $ratingBreakdown = collect(range(5, 1))
+            ->map(fn (int $rating): array => [
+                'rating' => $rating,
+                'count' => (int) ($ratingCounts[$rating] ?? 0),
+            ])
+            ->values();
+
+        $user = $request->user();
+        $myReview = $user?->reviews()
+            ->where('product_id', $product->id)
+            ->first();
+
+        $canReview = $user !== null
+            && $myReview === null
+            && $user->orders()
+                ->where('status', OrderStatus::Delivered->value)
+                ->whereHas('items', fn (Builder $query) => $query->where('product_id', $product->id))
+                ->exists();
+
+        $isWishlisted = $user?->wishlists()
+            ->where('product_id', $product->id)
+            ->exists() ?? false;
+
         return Inertia::render('Storefront/ProductDetail', [
             'product' => (new ProductResource($product))->resolve(),
             'related' => ProductResource::collection($related)->resolve(),
+            'reviews' => ReviewResource::collection($approvedReviews)->resolve(),
+            'ratingBreakdown' => $ratingBreakdown,
+            'canReview' => $canReview,
+            'myReview' => $myReview === null
+                ? null
+                : (new ReviewResource($myReview->loadMissing('user')))->resolve(),
+            'isWishlisted' => $isWishlisted,
         ]);
     }
 

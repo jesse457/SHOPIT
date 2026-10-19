@@ -8,6 +8,8 @@ use App\Contracts\PaymentGateway;
 use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\CheckoutRequest;
+use App\Models\Order;
+use App\Notifications\OrderPlacedNotification;
 use App\Services\CartService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -85,6 +87,8 @@ class CheckoutController extends Controller
         );
 
         if ($paymentMethod === PaymentMethod::CashOnDelivery) {
+            $this->notifyOrderPlaced($request, $order);
+
             return redirect()
                 ->route('checkout.success', ['order' => $order->id])
                 ->withToast('Order placed. Pay on delivery.');
@@ -96,6 +100,8 @@ class CheckoutController extends Controller
             $order->forceFill([
                 'stripe_checkout_session_id' => $session->id,
             ])->save();
+
+            $this->notifyOrderPlaced($request, $order);
 
             return Inertia::location($session->url);
         } catch (Throwable $error) {
@@ -120,6 +126,15 @@ class CheckoutController extends Controller
                     'Card payment could not be started. Your cart has been restored.',
                     'error',
                 );
+        }
+    }
+
+    private function notifyOrderPlaced(Request $request, Order $order): void
+    {
+        try {
+            $request->user()?->notify(new OrderPlacedNotification($order));
+        } catch (Throwable $error) {
+            report($error);
         }
     }
 }

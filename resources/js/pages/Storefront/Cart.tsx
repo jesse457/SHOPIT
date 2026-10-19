@@ -1,12 +1,14 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import {
     ArrowRight,
     Minus,
     Plus,
     ShoppingBag,
+    Tag,
     Trash,
 } from '@phosphor-icons/react';
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 
 import PageMeta from '@/components/common/PageMeta';
 import ProductImage from '@/components/storefront/ProductImage';
@@ -14,6 +16,10 @@ import { Button, ButtonLink } from '@/components/ui/button/Button';
 import EmptyState from '@/components/ui/table/EmptyState';
 import { formatCurrency } from '@/lib/utils';
 import { clear as cartClear } from '@/routes/cart';
+import {
+    destroy as cartCouponDestroy,
+    store as cartCouponStore,
+} from '@/routes/cart/coupon';
 import {
     destroy as cartDestroy,
     update as cartUpdate,
@@ -30,6 +36,23 @@ export default function Cart({ cart }: CartProps) {
     const { shop } = usePage<PageProps>().props;
     const [updatingId, setUpdatingId] = useState<number | null>(null);
     const [confirmClear, setConfirmClear] = useState(false);
+    const couponForm = useForm({ code: '' });
+    const couponError = (
+        couponForm.errors as Record<string, string | undefined>
+    ).coupon;
+
+    const applyCoupon = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        couponForm.post(cartCouponStore.url(), {
+            preserveScroll: true,
+            onSuccess: () => couponForm.reset(),
+        });
+    };
+
+    const removeCoupon = () => {
+        router.delete(cartCouponDestroy.url(), { preserveScroll: true });
+    };
 
     const money = (value: string) =>
         formatCurrency(value, shop.currency, shop.currency_locale);
@@ -275,6 +298,58 @@ export default function Cart({ cart }: CartProps) {
                                 Summary
                             </h2>
 
+                            {cart.coupon ? (
+                                <div className="mt-4 flex items-center justify-between gap-3 rounded-sm bg-raised px-3 py-2 text-[11px]">
+                                    <span className="flex items-center gap-1.5 font-medium text-soft">
+                                        <Tag size={13} aria-hidden="true" />
+                                        {cart.coupon.code}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={removeCoupon}
+                                        className="font-medium text-clay hover:text-ink"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={applyCoupon} className="mt-4">
+                                    <label
+                                        htmlFor="coupon-code"
+                                        className="sr-only"
+                                    >
+                                        Coupon code
+                                    </label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            id="coupon-code"
+                                            value={couponForm.data.code}
+                                            onChange={(event) =>
+                                                couponForm.setData(
+                                                    'code',
+                                                    event.target.value,
+                                                )
+                                            }
+                                            placeholder="Coupon code"
+                                            className="h-9 w-full rounded-sm border border-line bg-canvas px-2.5 text-[12px] text-ink placeholder:text-muted focus:border-ink focus:outline-none"
+                                        />
+                                        <Button
+                                            type="submit"
+                                            variant="secondary"
+                                            size="sm"
+                                            loading={couponForm.processing}
+                                        >
+                                            Apply
+                                        </Button>
+                                    </div>
+                                    {couponError && (
+                                        <p className="mt-1.5 text-[11px] text-danger">
+                                            {couponError}
+                                        </p>
+                                    )}
+                                </form>
+                            )}
+
                             <dl className="mt-5 space-y-3 text-[13px]">
                                 <div className="flex items-center justify-between gap-4">
                                     <dt className="text-soft">Subtotal</dt>
@@ -290,6 +365,19 @@ export default function Cart({ cart }: CartProps) {
                                             : money(cart.shipping)}
                                     </dd>
                                 </div>
+                                {Number.parseFloat(cart.discount) > 0 && (
+                                    <div className="flex items-center justify-between gap-4">
+                                        <dt className="text-soft">
+                                            Discount
+                                            {cart.coupon
+                                                ? ` (${cart.coupon.code})`
+                                                : ''}
+                                        </dt>
+                                        <dd className="tabular text-success">
+                                            - {money(cart.discount)}
+                                        </dd>
+                                    </div>
+                                )}
                             </dl>
 
                             <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-line pt-4">

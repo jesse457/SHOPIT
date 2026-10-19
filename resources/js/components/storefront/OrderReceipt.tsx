@@ -82,6 +82,19 @@ export default function OrderReceipt({ order }: { order: Order }) {
                                 : money(order.shipping_amount)}
                         </dd>
                     </div>
+                    {Number.parseFloat(order.discount_amount) > 0 && (
+                        <div className="flex items-center justify-between gap-4">
+                            <dt className="text-soft">
+                                Discount
+                                {order.coupon_code
+                                    ? ` (${order.coupon_code})`
+                                    : ''}
+                            </dt>
+                            <dd className="tabular text-success">
+                                - {money(order.discount_amount)}
+                            </dd>
+                        </div>
+                    )}
                     <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3">
                         <dt className="font-display text-[21px] font-medium">
                             Total

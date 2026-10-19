@@ -79,7 +79,7 @@ class StripeGateway implements PaymentGateway
             ];
         }
 
-        $session = $this->client()->checkout->sessions->create([
+        $params = [
             'mode' => 'payment',
             'payment_method_types' => ['card'],
             'customer_email' => $order->user?->email,
@@ -95,7 +95,20 @@ class StripeGateway implements PaymentGateway
                 $order->expires_at?->getTimestamp() ?? 0,
                 now()->addMinutes(31)->getTimestamp(),
             ),
-        ]);
+        ];
+
+        if ((float) $order->discount_amount > 0) {
+            $stripeCoupon = $this->client()->coupons->create([
+                'amount_off' => self::toMinorUnit((float) $order->discount_amount, $order->currency),
+                'currency' => $currency,
+                'duration' => 'once',
+                'name' => 'Discount '.($order->coupon_code ?? ''),
+            ]);
+
+            $params['discounts'] = [['coupon' => $stripeCoupon->id]];
+        }
+
+        $session = $this->client()->checkout->sessions->create($params);
 
         return new CheckoutSession($session->id, (string) $session->url);
     }

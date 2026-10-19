@@ -7,8 +7,10 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -359,6 +361,8 @@ class DemoDataSeeder extends Seeder
         $this->seedUsers();
         $this->seedCatalog();
         $this->seedOrders();
+        $this->seedCoupons();
+        $this->seedReviews();
     }
 
     private function seedUsers(): void
@@ -444,6 +448,110 @@ class DemoDataSeeder extends Seeder
                     'created_at' => now()->subDays($index % 21),
                     'updated_at' => now(),
                 ]);
+        }
+    }
+
+    private function seedCoupons(): void
+    {
+        $coupons = [
+            [
+                'code' => 'WELCOME10',
+                'type' => 'percentage',
+                'value' => 10,
+                'min_order_amount' => null,
+                'max_uses' => null,
+                'expires_at' => now()->addMonths(6),
+            ],
+            [
+                'code' => 'SAVE5000',
+                'type' => 'fixed',
+                'value' => 5000,
+                'min_order_amount' => 50000,
+                'max_uses' => 200,
+                'expires_at' => now()->addMonths(3),
+            ],
+            [
+                'code' => 'VIP15',
+                'type' => 'percentage',
+                'value' => 15,
+                'min_order_amount' => 100000,
+                'max_uses' => 50,
+                'expires_at' => now()->addMonths(2),
+            ],
+        ];
+
+        foreach ($coupons as $coupon) {
+            Coupon::query()->updateOrCreate(
+                ['code' => $coupon['code']],
+                [
+                    ...$coupon,
+                    'used_count' => 0,
+                    'starts_at' => null,
+                    'is_active' => true,
+                ],
+            );
+        }
+    }
+
+    private function seedReviews(): void
+    {
+        $reviews = [
+            [
+                'rating' => 5,
+                'title' => 'Exactly as described',
+                'body' => 'The material feels considered and the finish is clean. It has already become the piece I reach for most.',
+            ],
+            [
+                'rating' => 4,
+                'title' => 'Very good, slightly roomy',
+                'body' => 'Quality is excellent. The fit is a little relaxed compared with the size chart, so take that into account.',
+            ],
+            [
+                'rating' => 5,
+                'title' => 'Worth the wait',
+                'body' => 'Packaging was careful and the piece looks even better in person. Delivery took a few days longer than expected.',
+            ],
+            [
+                'rating' => 4,
+                'title' => 'A quiet everyday piece',
+                'body' => 'Simple, useful and well made. I would have liked one more colour option.',
+            ],
+            [
+                'rating' => 5,
+                'title' => 'Bought a second one',
+                'body' => 'The first one held up so well that I ordered another. That is the strongest review I can give.',
+            ],
+        ];
+
+        $deliveredOrders = Order::query()
+            ->where('status', OrderStatus::Delivered->value)
+            ->with(['items', 'user'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        foreach ($deliveredOrders as $index => $order) {
+            $item = $order->items->first();
+
+            if ($item === null || $order->user === null) {
+                continue;
+            }
+
+            $review = $reviews[$index % count($reviews)];
+
+            Review::query()->updateOrCreate(
+                [
+                    'product_id' => $item->product_id,
+                    'user_id' => $order->user_id,
+                ],
+                [
+                    'order_id' => $order->id,
+                    'rating' => $review['rating'],
+                    'title' => $review['title'],
+                    'body' => $review['body'],
+                    'is_approved' => true,
+                ],
+            );
         }
     }
 

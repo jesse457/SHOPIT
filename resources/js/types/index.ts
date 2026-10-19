@@ -97,6 +97,8 @@ export interface Product {
     stock_quantity: number;
     low_stock_threshold: number;
     is_low_stock: boolean;
+    rating_average?: number | null;
+    reviews_count?: number;
     created_at: string;
 }
 
@@ -115,6 +117,14 @@ export interface CartSummary {
     items: CartLine[];
     count: number;
     subtotal: string;
+    discount: string;
+    coupon: {
+        id: number;
+        code: string;
+        type: string;
+        value: string;
+        label: string;
+    } | null;
     shipping: string;
     grand_total: string;
     free_shipping_threshold: string;
@@ -155,6 +165,8 @@ export interface Order {
     payment_method_label: string;
     grand_total: string;
     shipping_amount: string;
+    discount_amount: string;
+    coupon_code: string | null;
     currency: string;
     notes: string | null;
     created_at: string;
@@ -188,6 +200,8 @@ export interface AdminOrderSummary {
     payment_method_label: string;
     grand_total: string;
     shipping_amount: string;
+    discount_amount: string;
+    coupon_code: string | null;
     currency: string;
     created_at: string;
     paid_at: string | null;
@@ -206,6 +220,42 @@ export interface AdminOrder extends AdminOrderSummary {
     can_retry_payment: boolean;
     items: OrderItem[];
     address: (Address & { full_name: string }) | null;
+}
+
+export interface Review {
+    id: number;
+    rating: number;
+    title: string | null;
+    body: string | null;
+    is_approved: boolean;
+    user_name?: string;
+    created_at: string;
+}
+
+export interface AdminReview {
+    id: number;
+    rating: number;
+    title: string | null;
+    body: string | null;
+    is_approved: boolean;
+    created_at: string;
+    product: { id: number; name: string; slug: string } | null;
+    user: { id: number; name: string; email: string } | null;
+}
+
+export interface AdminCoupon {
+    id: number;
+    code: string;
+    type: 'percentage' | 'fixed';
+    type_label: string;
+    value: string;
+    min_order_amount: string | null;
+    max_uses: number | null;
+    used_count: number;
+    starts_at: string | null;
+    expires_at: string | null;
+    is_active: boolean;
+    created_at: string;
 }
 
 export interface AdminCustomer {
@@ -236,6 +286,9 @@ export interface PageProps {
         user: User | null;
     };
     cart: {
+        count: number;
+    };
+    wishlist: {
         count: number;
     };
     navCategories: NavCategory[];

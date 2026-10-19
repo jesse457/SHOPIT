@@ -6,7 +6,10 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Notifications\OrderPlacedNotification;
+use App\Notifications\OrderStatusChangedNotification;
 use App\Support\CheckoutSession;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\FakePaymentGateway;
 
@@ -82,6 +85,23 @@ test('cash on delivery places an order and reserves stock', function () {
 
     expect($product->fresh()->stock_quantity)->toBe(8);
     expect(session('cart'))->toBeNull();
+});
+
+test('cash on delivery sends an order confirmation', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+    $product = Product::factory()->create([
+        'price' => 42000,
+        'stock_quantity' => 10,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['cart' => [$product->id => 1]])
+        ->post('/checkout', checkoutPayload());
+
+    Notification::assertSentTo($user, OrderPlacedNotification::class);
 });
 
 test('delivery is charged below the free shipping threshold', function () {
@@ -180,6 +200,8 @@ test('a failed stripe session restores the cart and releases stock', function ()
 });
 
 test('a verified paid session marks the order as paid', function () {
+    Notification::fake();
+
     $fake = new FakePaymentGateway;
     $order = placeStripeOrder($this, $fake);
     $fake->markPaid('cs_test_1');
@@ -195,6 +217,8 @@ test('a verified paid session marks the order as paid', function () {
     expect($order->payment_status)->toBe(PaymentStatus::Paid)
         ->and($order->paid_at)->not->toBeNull()
         ->and($order->status)->toBe(OrderStatus::Processing);
+
+    Notification::assertSentTo($order->user, OrderStatusChangedNotification::class);
 });
 
 test('a mismatched session id cannot mark an order paid', function () {

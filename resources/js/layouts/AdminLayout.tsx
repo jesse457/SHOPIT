@@ -7,8 +7,10 @@ import {
     Shapes,
     SignOut,
     SquaresFour,
+    Star,
     Storefront,
     Tag,
+    Ticket,
     Users,
     X,
 } from '@phosphor-icons/react';
@@ -24,9 +26,11 @@ import { home } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as adminBrandsIndex } from '@/routes/admin/brands';
 import { index as adminCategoriesIndex } from '@/routes/admin/categories';
+import { index as adminCouponsIndex } from '@/routes/admin/coupons';
 import { index as adminCustomersIndex } from '@/routes/admin/customers';
 import { index as adminOrdersIndex } from '@/routes/admin/orders';
 import { index as adminProductsIndex } from '@/routes/admin/products';
+import { index as adminReviewsIndex } from '@/routes/admin/reviews';
 import type { PageProps } from '@/types';
 
 const NAVIGATION = [
@@ -35,6 +39,8 @@ const NAVIGATION = [
     { href: adminProductsIndex.url(), label: 'Products', icon: Package },
     { href: adminCategoriesIndex.url(), label: 'Categories', icon: Shapes },
     { href: adminBrandsIndex.url(), label: 'Brands', icon: Tag },
+    { href: adminCouponsIndex.url(), label: 'Coupons', icon: Ticket },
+    { href: adminReviewsIndex.url(), label: 'Reviews', icon: Star },
     { href: adminCustomersIndex.url(), label: 'Customers', icon: Users },
 ];
 

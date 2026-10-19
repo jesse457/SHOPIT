@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -18,10 +20,13 @@ use App\Http\Controllers\Storefront\CheckoutCancelController;
 use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\CheckoutRetryController;
 use App\Http\Controllers\Storefront\CheckoutSuccessController;
+use App\Http\Controllers\Storefront\CouponController;
 use App\Http\Controllers\Storefront\HomeController;
 use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\ProductController;
+use App\Http\Controllers\Storefront\ReviewController;
 use App\Http\Controllers\Storefront\StripeWebhookController;
+use App\Http\Controllers\Storefront\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,6 +81,16 @@ Route::middleware('auth')->group(function (): void {
     Route::patch('account', [AccountController::class, 'update'])->name('account.update');
     Route::patch('account/password', [AccountController::class, 'updatePassword'])
         ->name('account.password');
+
+    Route::get('wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('wishlist/{product:slug}', [WishlistController::class, 'store'])
+        ->name('wishlist.store');
+    Route::delete('wishlist/{product:slug}', [WishlistController::class, 'destroy'])
+        ->name('wishlist.destroy');
+
+    Route::post('products/{product:slug}/reviews', [ReviewController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('reviews.store');
 });
 
 Route::post('stripe/webhook', StripeWebhookController::class)
@@ -94,6 +109,15 @@ Route::middleware(['auth', 'admin'])
             ->except(['show']);
         Route::resource('brands', BrandController::class)
             ->except(['show']);
+        Route::resource('coupons', AdminCouponController::class)
+            ->except(['show']);
+
+        Route::get('reviews', [AdminReviewController::class, 'index'])
+            ->name('reviews.index');
+        Route::patch('reviews/{review}', [AdminReviewController::class, 'update'])
+            ->name('reviews.update');
+        Route::delete('reviews/{review}', [AdminReviewController::class, 'destroy'])
+            ->name('reviews.destroy');
 
         Route::get('orders', [AdminOrderController::class, 'index'])
             ->name('orders.index');
@@ -126,6 +150,9 @@ Route::middleware('track_visitors')->group(function (): void {
     Route::patch('cart/items/{product:slug}', [CartController::class, 'update'])->name('cart.items.update');
     Route::delete('cart/items/{product:slug}', [CartController::class, 'destroy'])->name('cart.items.destroy');
     Route::delete('cart', [CartController::class, 'clear'])->name('cart.clear');
+
+    Route::post('cart/coupon', [CouponController::class, 'store'])->name('cart.coupon.store');
+    Route::delete('cart/coupon', [CouponController::class, 'destroy'])->name('cart.coupon.destroy');
 });
 
 Route::fallback(function (Request $request) {

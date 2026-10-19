@@ -5,6 +5,7 @@ namespace App\Actions\Checkout;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -82,14 +83,36 @@ class PlaceOrderAction
                 ? 0.0
                 : (float) config('shop.shipping.flat_rate');
 
+            $coupon = null;
+            $discount = 0.0;
+
+            if ($summary['coupon'] !== null) {
+                $coupon = Coupon::query()
+                    ->lockForUpdate()
+                    ->find($summary['coupon']['id']);
+
+                if ($coupon === null || ! $coupon->isValidFor($subtotal)) {
+                    throw ValidationException::withMessages([
+                        'coupon' => 'The coupon is no longer valid. Remove it and try again.',
+                    ]);
+                }
+
+                $discount = $coupon->discountFor($subtotal);
+            }
+
+            $grandTotal = max(0.0, $subtotal + $shipping - $discount);
+
             $order = Order::query()->create([
                 'user_id' => $user->id,
-                'grand_total' => $subtotal + $shipping,
+                'coupon_id' => $coupon?->id,
+                'coupon_code' => $coupon?->code,
+                'grand_total' => $grandTotal,
                 'payment_method' => $paymentMethod,
                 'payment_status' => PaymentStatus::Pending,
                 'status' => OrderStatus::New,
                 'currency' => config('shop.currency'),
                 'shipping_amount' => $shipping,
+                'discount_amount' => $discount,
                 'shipping_method' => 'standard',
                 'notes' => $notes,
                 'expires_at' => $paymentMethod === PaymentMethod::Stripe
@@ -115,6 +138,10 @@ class PlaceOrderAction
                 $product->forceFill([
                     'stock_quantity' => $product->stock_quantity - $line['quantity'],
                 ])->save();
+            }
+
+            if ($coupon !== null) {
+                $coupon->increment('used_count');
             }
 
             $this->cart->clear();

@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { Star } from '@phosphor-icons/react';
 
 import ProductImage from '@/components/storefront/ProductImage';
 import Badge from '@/components/ui/badge/Badge';
@@ -56,13 +57,25 @@ export default function ProductCard({ product }: { product: Product }) {
                     {product.name}
                 </h3>
 
-                <div className="mt-1.5 flex items-baseline gap-2">
+                <div className="mt-1.5 flex flex-wrap items-baseline gap-2">
                     <span className="tabular text-[13px] font-medium text-ink">
                         {formatCurrency(product.price)}
                     </span>
                     {hasComparePrice && (
                         <span className="tabular text-[12px] text-muted line-through">
                             {formatCurrency(product.compare_at_price)}
+                        </span>
+                    )}
+                    {(product.reviews_count ?? 0) > 0 && (
+                        <span className="ml-auto flex items-center gap-1 text-[11px] text-muted">
+                            <Star
+                                size={11}
+                                weight="fill"
+                                className="text-sun"
+                                aria-hidden="true"
+                            />
+                            {product.rating_average?.toFixed(1)}
+                            <span>({product.reviews_count})</span>
                         </span>
                     )}
                 </div>

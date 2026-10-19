@@ -36,6 +36,9 @@ class HandleInertiaRequests extends Middleware
             'cart' => [
                 'count' => (int) array_sum(session('cart', [])),
             ],
+            'wishlist' => [
+                'count' => $user?->wishlists()->count() ?? 0,
+            ],
             'navCategories' => fn (): array => Cache::remember(
                 'nav.categories',
                 now()->addMinutes(5),
