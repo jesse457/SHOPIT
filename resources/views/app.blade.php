@@ -11,8 +11,18 @@
         {{-- Apply the saved theme before the first paint so dark mode never flashes. --}}
         <script>
             (function () {
-                var stored = localStorage.getItem('shopit-theme');
-                var dark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                try {
+                    var stored = localStorage.getItem('shopit-theme');
+
+                    if (stored) {
+                        dark = stored === 'dark';
+                    }
+                } catch (e) {
+                    // Storage can be blocked. Fall back to the system preference.
+                }
+
                 document.documentElement.classList.toggle('dark', dark);
                 document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
             })();

@@ -249,41 +249,52 @@ export default function Dashboard({
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-line">
-                                {recentOrders.map((order) => (
-                                    <tr
-                                        key={order.id}
-                                        className="transition-colors hover:bg-raised/60"
-                                    >
-                                        <td className="px-5 py-3 font-medium whitespace-nowrap">
-                                            {order.number}
-                                        </td>
-                                        <td className="max-w-[180px] truncate px-5 py-3 text-soft">
-                                            {order.user?.name ?? 'Guest'}
-                                        </td>
-                                        <td className="px-5 py-3">
-                                            <Badge
-                                                tone={orderStatusTone(
-                                                    order.status,
-                                                )}
-                                            >
-                                                {order.status_label}
-                                            </Badge>
-                                        </td>
-                                        <td className="tabular px-5 py-3 whitespace-nowrap">
-                                            {money(order.grand_total)}
-                                        </td>
-                                        <td className="px-5 py-3 text-right whitespace-nowrap">
-                                            <Link
-                                                href={adminOrderShow.url(
-                                                    order.id,
-                                                )}
-                                                className="text-[11px] font-medium text-clay hover:text-ink"
-                                            >
-                                                View
-                                            </Link>
+                                {recentOrders.length === 0 ? (
+                                    <tr>
+                                        <td
+                                            colSpan={5}
+                                            className="px-5 py-8 text-center text-[12px] text-muted"
+                                        >
+                                            No orders yet.
                                         </td>
                                     </tr>
-                                ))}
+                                ) : (
+                                    recentOrders.map((order) => (
+                                        <tr
+                                            key={order.id}
+                                            className="transition-colors hover:bg-raised/60"
+                                        >
+                                            <td className="px-5 py-3 font-medium whitespace-nowrap">
+                                                {order.number}
+                                            </td>
+                                            <td className="max-w-[180px] truncate px-5 py-3 text-soft">
+                                                {order.user?.name ?? 'Guest'}
+                                            </td>
+                                            <td className="px-5 py-3">
+                                                <Badge
+                                                    tone={orderStatusTone(
+                                                        order.status,
+                                                    )}
+                                                >
+                                                    {order.status_label}
+                                                </Badge>
+                                            </td>
+                                            <td className="tabular px-5 py-3 whitespace-nowrap">
+                                                {money(order.grand_total)}
+                                            </td>
+                                            <td className="px-5 py-3 text-right whitespace-nowrap">
+                                                <Link
+                                                    href={adminOrderShow.url(
+                                                        order.id,
+                                                    )}
+                                                    className="text-[11px] font-medium text-clay hover:text-ink"
+                                                >
+                                                    View
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -300,6 +311,36 @@ export default function Dashboard({
                         <div className="mt-4">
                             <VisitorChart data={visitorSeries} />
                         </div>
+
+                        <details className="mt-3 border-t border-line pt-3">
+                            <summary className="cursor-pointer text-[11px] font-medium text-muted hover:text-ink">
+                                View data
+                            </summary>
+                            <table className="mt-2 w-full text-[11px]">
+                                <thead>
+                                    <tr className="text-left text-muted">
+                                        <th className="py-1 font-medium">
+                                            Day
+                                        </th>
+                                        <th className="py-1 text-right font-medium">
+                                            Visits
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-line">
+                                    {visitorSeries.map((point) => (
+                                        <tr key={point.date}>
+                                            <td className="py-1 text-soft">
+                                                {point.label}
+                                            </td>
+                                            <td className="tabular py-1 text-right text-ink">
+                                                {point.count}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </details>
                     </section>
 
                     <section className="rounded-sm border border-line bg-surface p-5">
